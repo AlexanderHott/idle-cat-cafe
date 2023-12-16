@@ -16,10 +16,10 @@ if (typeof window !== "undefined") { // Check if we're running in the browser.
   const now = Math.floor(Date.now() / 1000);
   localStorage.setItem("lastLogin", now.toString());
   const lastActive = parseInt(localStorage.getItem("lastActive") ?? "0")
-  const diff = (now - lastActive)
+  const diff = lastActive > 0 ? (now - lastActive) : 0
   localStorage.setItem("diff", diff.toString());
   localStorage.setItem("lastActive", now.toString())
-  const money = parseInt(localStorage.getItem("money") ?? "0")
+  const money = parseInt(localStorage.getItem("money") ?? "10")
 
   const moneyMultiplier = 100;
   localStorage.setItem("money", (money + diff * moneyMultiplier).toString())
@@ -27,7 +27,7 @@ if (typeof window !== "undefined") { // Check if we're running in the browser.
 }
 
 const moneyAtom = atom(
-  parseInt(localStorage.getItem("money") ?? "0"),
+  parseInt(localStorage.getItem("money") ?? "10"),
 );
 
 export const moneyAtomWithPersistence = atom(
