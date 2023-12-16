@@ -111,7 +111,7 @@ export default function Game() {
         className="-z-10 overflow-x-scroll h-full max-w-none pointer-events-none"
         onLoad={() => setLoaded(true)}
       />
-      <div className="absolute top-2 right-2 bg-red-500 p-2 text-white rounded">
+      <div className="fixed top-2 right-2 bg-red-500 p-2 text-white rounded">
         ${money}
       </div>
       <div
