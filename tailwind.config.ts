@@ -10,8 +10,11 @@ export default {
       },
       backgroundImage: {
         cafe: "url(/cafe.jpg)",
-        'cafe-small': "url(/cafe-small.jpg)"
-      }
+        "cafe-small": "url(/cafe-small.jpg)",
+      },
+      fontSize: {
+        clamp: "clamp(1rem, 5vw, 1.25rem)",
+      },
     },
   },
   plugins: [],
