@@ -8,6 +8,10 @@ export default {
       fontFamily: {
         sans: ["var(--font-sans)", ...fontFamily.sans],
       },
+      backgroundImage: {
+        cafe: "url(/cafe.jpg)",
+        'cafe-small': "url(/cafe-small.jpg)"
+      }
     },
   },
   plugins: [],
