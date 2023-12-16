@@ -40,7 +40,7 @@ export function Game() {
 
   return (
     <>
-      <img ref={ref} src="/space-h.jpeg" loading="eager" className="-z-10 overflow-x-scroll h-screen max-w-none" onLoad={() => setLoaded(true)}/>
+      <img ref={ref} src="/space-h.jpeg" loading="eager" className="-z-10 overflow-x-scroll h-full max-w-none" onLoad={() => setLoaded(true)}/>
       <div className="absolute w-[10vw] h-[10vw] bg-red-500 top-0 left-0" >a</div>
     </>
   );
