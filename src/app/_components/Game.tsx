@@ -29,8 +29,8 @@ function useWindowDimensions() {
 }
 
 export function Game() {
-  const [gameState, setGameState] = useLocalStorage("gameState", {});
-  const { width, height } = useWindowDimensions();
+  // const [gameState, setGameState] = useLocalStorage("gameState", {});
+  // const { width, height } = useWindowDimensions();
   const ref = useRef<HTMLImageElement>(null);
   const [loaded, setLoaded] = useState(false);
 
