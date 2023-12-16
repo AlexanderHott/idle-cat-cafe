@@ -40,7 +40,7 @@ export function Game() {
         ref={ref}
         src="/space-h.jpeg"
         loading="eager"
-        className="-z-10 overflow-x-scroll h-full max-w-none"
+        className="-z-10 overflow-x-scroll h-full max-w-none pointer-events-none"
         onLoad={() => setLoaded(true)}
       />
       <div
