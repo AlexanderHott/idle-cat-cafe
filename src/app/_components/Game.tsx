@@ -27,7 +27,7 @@ if (typeof window !== "undefined") { // Check if we're running in the browser.
 }
 
 const moneyAtom = atom(
-  parseInt(localStorage.getItem("money") || "0"),
+  parseInt(localStorage.getItem("money") ?? "0"),
 );
 
 export const moneyAtomWithPersistence = atom(
@@ -41,7 +41,7 @@ export const moneyAtomWithPersistence = atom(
 );
 
 const lastActiveAtom = atom(
-  parseInt(localStorage.getItem("lastActive") || "0"),
+  parseInt(localStorage.getItem("lastActive") ?? "0"),
 );
 
 export const lastActiveAtomWithPersistence = atom(
