@@ -1,29 +1,34 @@
 "use client";
-
-// . user logs in .
-// set login time in ls
-// set diff in ls
-// . game component mounts .
-// update money
-// register interval to set lastActive time
-
 import { useEffect, useRef, useState } from "react";
 import { WelcomeBackModal } from "./WelcomeBackModal";
 import { atom, useAtom } from "jotai";
+import { Shop } from "./Shop";
 
+const LAST_LOGIN = "lastLogin";
+const LAST_ACTIVE = "lastActive";
+const DIFF = "diff";
+const MONEY = "money";
+
+// Welcome back reward
 if (typeof window !== "undefined") { // Check if we're running in the browser.
   // ✅ Only runs once per app load
   const now = Math.floor(Date.now() / 1000);
-  localStorage.setItem("lastLogin", now.toString());
-  const lastActive = parseInt(localStorage.getItem("lastActive") ?? "0")
-  const diff = lastActive > 0 ? (now - lastActive) : 0
-  localStorage.setItem("diff", diff.toString());
-  localStorage.setItem("lastActive", now.toString())
-  const money = parseInt(localStorage.getItem("money") ?? "10")
+  localStorage.setItem(LAST_LOGIN, now.toString());
+  const lastActive = parseInt(localStorage.getItem(LAST_ACTIVE) ?? "0");
+  const diff = lastActive > 0 ? (now - lastActive) : 0;
+  localStorage.setItem(DIFF, diff.toString());
+  localStorage.setItem(LAST_ACTIVE, now.toString());
+  const money = parseInt(localStorage.getItem(MONEY) ?? "10");
 
   const moneyMultiplier = 100;
-  localStorage.setItem("money", (money + diff * moneyMultiplier).toString())
-  console.log("WELCOME BACK", diff, moneyMultiplier, money, money + diff * moneyMultiplier)
+  localStorage.setItem(MONEY, (money + diff * moneyMultiplier).toString());
+  console.log(
+    "WELCOME BACK",
+    diff,
+    moneyMultiplier,
+    money,
+    money + diff * moneyMultiplier,
+  );
 }
 
 const moneyAtom = atom(
@@ -34,35 +39,33 @@ export const moneyAtomWithPersistence = atom(
   (get) => get(moneyAtom),
   (get, set, newMoney: (m: number) => number) => {
     const newM = newMoney(get(moneyAtom));
-    console.log("Setting money in local storage", newM)
+    console.log("Setting money in local storage", newM);
     set(moneyAtom, newM);
-    localStorage.setItem("money", newM.toString());
+    localStorage.setItem(MONEY, newM.toString());
   },
 );
 
 const lastActiveAtom = atom(
-  parseInt(localStorage.getItem("lastActive") ?? "0"),
+  parseInt(localStorage.getItem(LAST_ACTIVE) ?? "0"),
 );
 
 export const lastActiveAtomWithPersistence = atom(
   (get) => get(lastActiveAtom),
   (get, set, newTime: number) => {
     set(lastActiveAtom, newTime);
-    localStorage.setItem("lastActive", newTime.toString());
+    localStorage.setItem(LAST_ACTIVE, newTime.toString());
   },
 );
 
 export default function Game() {
-  console.log("Mount game")
   if (typeof window === "undefined") {
     return null;
   }
-  const [money, setMoney] = useAtom(moneyAtomWithPersistence)
-  const [lastActive, setLastActive] = useAtom(lastActiveAtomWithPersistence)
-  const diff = parseInt(localStorage.getItem("diff") ?? "0")
+  const [money, setMoney] = useAtom(moneyAtomWithPersistence);
+  const [lastActive, setLastActive] = useAtom(lastActiveAtomWithPersistence);
+  const diff = parseInt(localStorage.getItem(DIFF) ?? "0");
   const showWelcomeBackModal = diff > 10;
 
-  // const [gameState, setGameState] = useLocalStorage("gameState", {});
   const ref = useRef<HTMLImageElement>(null);
   const [loaded, setLoaded] = useState(false);
   const [width, setWidth] = useState(0);
@@ -111,8 +114,11 @@ export default function Game() {
         className="-z-10 overflow-x-scroll h-full max-w-none pointer-events-none"
         onLoad={() => setLoaded(true)}
       />
-      <div className="fixed top-2 right-2 bg-red-500 p-2 text-white rounded">
-        ${money}
+      <div className="fixed top-2 right-2 p-2 flex flex-col gap-2 items-end">
+        <div className="bg-black p-2 text-white rounded">
+          ${money}
+        </div>
+        <Shop />
       </div>
       <div
         className={`absolute bg-black left-0 z-10 text-clamp`}
