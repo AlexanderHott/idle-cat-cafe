@@ -27,9 +27,9 @@ import {
 } from "~/components/ui/sheet";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs"
 import { ScrollArea } from "~/components/ui/scroll-area";
-import { purchasedCatToysAtomWithPersistence } from "~/lib/gameState.ts";
+import { purchasedCatToysAtomWithPersistence } from "~/lib/gameState";
 import { useAtom } from "jotai";
-import { moneyAtomWithPersistence } from "~/app/_components/Game.tsx";
+import { moneyAtomWithPersistence } from "~/app/_components/Game";
 
 type CatToy = {
   id: number;

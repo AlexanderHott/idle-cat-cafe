@@ -31,8 +31,8 @@ import { atomWithStorage, RESET } from "jotai/utils";
 
 const PURCHASED_CAT_TOYS = "purchasedCatToys";
 
-const purchasedCatToysAtom = atom(
-  JSON.parse(localStorage.getItem(PURCHASED_CAT_TOYS) ?? "[]"),
+const purchasedCatToysAtom = atom<number[]>(
+  JSON.parse(localStorage.getItem(PURCHASED_CAT_TOYS) ?? "[]") as number[],
 );
 
 export const purchasedCatToysAtomWithPersistence = atom(
