@@ -1,11 +1,10 @@
-import dynamic from 'next/dynamic';
+import dynamic from "next/dynamic";
 
 // import { Game } from "./_components/Game";
-const Game = dynamic(() => import('./_components/Game'), { ssr: false })
+const Game = dynamic(() => import("./_components/Game"), { ssr: false });
 export default async function Home() {
-
   return (
-    <main className="w-full h-full text-slate-500 isolate relative">
+    <main className="relative isolate h-full w-full text-slate-500">
       <Game />
     </main>
   );

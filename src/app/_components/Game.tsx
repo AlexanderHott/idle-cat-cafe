@@ -10,12 +10,13 @@ const DIFF = "diff";
 const MONEY = "money";
 
 // Welcome back reward
-if (typeof window !== "undefined") { // Check if we're running in the browser.
+if (typeof window !== "undefined") {
+  // Check if we're running in the browser.
   // ✅ Only runs once per app load
   const now = Math.floor(Date.now() / 1000);
   localStorage.setItem(LAST_LOGIN, now.toString());
   const lastActive = parseInt(localStorage.getItem(LAST_ACTIVE) ?? "0");
-  const diff = lastActive > 0 ? (now - lastActive) : 0;
+  const diff = lastActive > 0 ? now - lastActive : 0;
   localStorage.setItem(DIFF, diff.toString());
   localStorage.setItem(LAST_ACTIVE, now.toString());
   const money = parseInt(localStorage.getItem(MONEY) ?? "10");
@@ -31,9 +32,7 @@ if (typeof window !== "undefined") { // Check if we're running in the browser.
   );
 }
 
-const moneyAtom = atom(
-  parseInt(localStorage.getItem("money") ?? "10"),
-);
+const moneyAtom = atom(parseInt(localStorage.getItem("money") ?? "10"));
 
 export const moneyAtomWithPersistence = atom(
   (get) => get(moneyAtom),
@@ -45,9 +44,7 @@ export const moneyAtomWithPersistence = atom(
   },
 );
 
-const lastActiveAtom = atom(
-  parseInt(localStorage.getItem(LAST_ACTIVE) ?? "0"),
-);
+const lastActiveAtom = atom(parseInt(localStorage.getItem(LAST_ACTIVE) ?? "0"));
 
 export const lastActiveAtomWithPersistence = atom(
   (get) => get(lastActiveAtom),
@@ -97,31 +94,26 @@ export default function Game() {
 
   const HEIGHT = 400;
   const dWidth = Math.floor(width * 0.03);
-  const dHeight = Math.floor(width / HEIGHT * 10);
+  const dHeight = Math.floor((width / HEIGHT) * 10);
   const sWidth = Math.floor(width * 0.202);
-  const sHeight = Math.floor(width / HEIGHT * 10);
+  const sHeight = Math.floor((width / HEIGHT) * 10);
 
   return (
     <>
-      <WelcomeBackModal
-        defaultOpen={showWelcomeBackModal}
-        diff={diff}
-      />
+      <WelcomeBackModal defaultOpen={showWelcomeBackModal} diff={diff} />
       <img
         ref={ref}
         src="/space-h.jpeg"
         loading="eager"
-        className="-z-10 overflow-x-scroll h-full max-w-none pointer-events-none"
+        className="pointer-events-none -z-10 h-full max-w-none overflow-x-scroll"
         onLoad={() => setLoaded(true)}
       />
-      <div className="fixed top-2 right-2 p-2 flex flex-col gap-2 items-end">
-        <div className="bg-black p-2 text-white rounded">
-          ${money}
-        </div>
+      <div className="fixed right-2 top-2 flex flex-col items-end gap-2 p-2">
+        <div className="rounded bg-black p-2 text-white">${money}</div>
         <Shop />
       </div>
       <div
-        className={`absolute bg-black left-0 z-10 text-clamp`}
+        className={`text-clamp absolute left-0 z-10 bg-black`}
         style={{
           top: `${dHeight}px`,
           left: `${dWidth}px`,
@@ -132,7 +124,7 @@ export default function Game() {
         {width}
       </div>
       <div
-        className={`absolute bg-orange-500 left-0 z-10 text-clamp`}
+        className={`text-clamp absolute left-0 z-10 bg-orange-500`}
         style={{
           top: `${sHeight}px`,
           left: `${sWidth}px`,

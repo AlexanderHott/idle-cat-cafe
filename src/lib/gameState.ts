@@ -28,3 +28,17 @@ import { atomWithStorage, RESET } from "jotai/utils";
 //     localStorage.setItem("lastLogin", newlastLogin.toString());
 //   },
 // );
+
+const PURCHASED_CAT_TOYS = "purchasedCatToys";
+
+const purchasedCatToysAtom = atom(
+  JSON.parse(localStorage.getItem(PURCHASED_CAT_TOYS) ?? "[]"),
+);
+
+export const purchasedCatToysAtomWithPersistence = atom(
+  (get) => get(purchasedCatToysAtom),
+  (get, set, newArr: number[]) => {
+    set(purchasedCatToysAtom, newArr);
+    localStorage.setItem(PURCHASED_CAT_TOYS, JSON.stringify(newArr));
+  },
+);

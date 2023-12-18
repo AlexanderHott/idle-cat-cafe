@@ -11,9 +11,13 @@ import {
   DialogTrigger,
 } from "~/components/ui/dialog";
 
-export function WelcomeBackModal(
-  { defaultOpen, diff }: { defaultOpen?: boolean; diff: number },
-) {
+export function WelcomeBackModal({
+  defaultOpen,
+  diff,
+}: {
+  defaultOpen?: boolean;
+  diff: number;
+}) {
   return (
     <Dialog defaultOpen={defaultOpen}>
       <DialogContent className="sm:max-w-[425px]">
