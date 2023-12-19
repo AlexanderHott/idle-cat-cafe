@@ -25,9 +25,13 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "~/components/ui/sheet";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
 import { ScrollArea } from "~/components/ui/scroll-area";
-import { purchasedCatToysAtomWithPersistence } from "~/lib/gameState";
+import { 
+  purchasedCatToysAtomWithPersistence,
+  hiredEmployeesAtomWithPersistence,
+  ownedMenuItemsAtomWithPersistence,
+} from "~/lib/gameState";
 import { useAtom } from "jotai";
 import { moneyAtomWithPersistence } from "~/app/_components/Game";
 
@@ -97,6 +101,20 @@ const EMPS: Emp[] = [
     price: 10,
     image: "/box.png",
   },
+  {
+    id: 4,
+    name: "Short person",
+    desc: "I like to draw",
+    price: 10,
+    image: "/box.png",
+  },
+  {
+    id: 5,
+    name: "Short person",
+    desc: "I like to draw",
+    price: 10,
+    image: "/box.png",
+  },
 ];
 type MenuItem = {
   id: number;
@@ -137,43 +155,48 @@ export function Shop() {
           <ShoppingCart />
         </Button>
       </SheetTrigger>
-      <SheetContent>
+      <SheetContent className="flex flex-col">
         <SheetHeader>
-            <SheetTitle>Shop</SheetTitle>
-            <SheetDescription>Buy some cute cat toys!</SheetDescription>
-	    <Tabs defaultValue="toys" className="">
-	      <TabsList className="w-full ">
-		<TabsTrigger className="w-full" value="toys">Toys</TabsTrigger>
-		<TabsTrigger className="w-full" value="hire">Hire</TabsTrigger>
-		<TabsTrigger className="w-full" value="menu">Menu</TabsTrigger>
-	      </TabsList>
-	      <TabsContent value="toys">
-		<ToyShop />
-	      </TabsContent>
-	      <TabsContent value="hire">
-		<HireShop />
-	      </TabsContent>
-	      <TabsContent value="menu">
-		<MenuShop />
-	      </TabsContent>
-	    </Tabs>
+          <SheetTitle>Shop</SheetTitle>
+          <SheetDescription>Buy some cute cat toys!</SheetDescription>
         </SheetHeader>
+
+        <ScrollArea className="">
+        <Tabs defaultValue="toys" className="flex flex-col">
+          <TabsList className="w-full">
+            <TabsTrigger className="w-full" value="toys">
+              Toys
+            </TabsTrigger>
+            <TabsTrigger className="w-full" value="hire">
+              Hire
+            </TabsTrigger>
+            <TabsTrigger className="w-full" value="menu">
+              Menu
+            </TabsTrigger>
+          </TabsList>
+            <TabsContent value="toys">
+              <ToyShop />
+            </TabsContent>
+            <TabsContent value="hire">
+              <HireShop />
+            </TabsContent>
+            <TabsContent value="menu">
+              <MenuShop />
+            </TabsContent>
+        </Tabs>
+          </ScrollArea>
       </SheetContent>
     </Sheet>
   );
 }
 
-
 export function ToyShop() {
   return (
-  <ScrollArea className="h-screen">
-   toys
-    <div className="flex flex-col gap-2 pt-2">
-      {CAT_TOYS.map((toy) => (
-        <CatToy key={toy.id} {...toy} />
-      ))}
-    </div>
-  </ScrollArea>
+      <div className="flex flex-col gap-2 pt-2">
+        {CAT_TOYS.map((toy) => (
+          <CatToy key={toy.id} {...toy} />
+        ))}
+      </div>
   );
 }
 
@@ -209,26 +232,79 @@ function CatToy({ id, name, desc, price, image }: CatToy) {
 
 export function HireShop() {
   return (
-  <ScrollArea className="h-screen">
-   hire
-    <div className="flex flex-col gap-2 pt-2">
-      {EMPS.map((toy) => (
-        <CatToy key={toy.id} {...toy} />
-      ))}
-    </div>
-  </ScrollArea>
+      <div className="flex flex-col gap-2 pt-2">
+        {EMPS.map((toy) => (
+          <Employee key={toy.id} {...toy} />
+        ))}
+      </div>
   );
 }
 
+function Employee({ id, name, desc, price, image }: CatToy) {
+  const [hiredEmps, setHiredEmps] = useAtom(
+    hiredEmployeesAtomWithPersistence,
+  );
+  const [money, setMoney] = useAtom(moneyAtomWithPersistence);
+  const hired = hiredEmps.includes(id);
+  function handleClick() {
+    setHiredEmps([...hiredEmps, id]);
+    setMoney((m) => m - price);
+  }
+  return (
+    <Card>
+      <CardHeader className="flex flex-row justify-between">
+        <div>
+          <CardTitle className="text-lg">{name}</CardTitle>
+          <CardDescription>{desc}</CardDescription>
+        </div>
+        <div>
+          <Image src={image} alt={name} width={24} height={24} />
+        </div>
+      </CardHeader>
+      <CardContent className="flex flex-row justify-end">
+        <Button disabled={hired} onClick={handleClick}>
+          {hired ? "Hired" : `$ ${price}`}
+        </Button>
+      </CardContent>
+    </Card>
+  );
+}
 export function MenuShop() {
   return (
-  <ScrollArea className="h-screen">
-menu
-    <div className="flex flex-col gap-2 pt-2">
-      {MENU_ITEMS.map((toy) => (
-        <CatToy key={toy.id} {...toy} />
-      ))}
-    </div>
-  </ScrollArea>
+      <div className="flex flex-col gap-2 pt-2">
+        {MENU_ITEMS.map((toy) => (
+          <MenuItem key={toy.id} {...toy} />
+        ))}
+      </div>
+  );
+}
+
+function MenuItem({ id, name, desc, price, image }: CatToy) {
+  const [menuItems, setMenuItems] = useAtom(
+    ownedMenuItemsAtomWithPersistence,
+  );
+  const [money, setMoney] = useAtom(moneyAtomWithPersistence);
+  const owned = menuItems.includes(id);
+  function handleClick() {
+    setMenuItems([...menuItems, id]);
+    setMoney((m) => m - price);
+  }
+  return (
+    <Card>
+      <CardHeader className="flex flex-row justify-between">
+        <div>
+          <CardTitle className="text-lg">{name}</CardTitle>
+          <CardDescription>{desc}</CardDescription>
+        </div>
+        <div>
+          <Image src={image} alt={name} width={24} height={24} />
+        </div>
+      </CardHeader>
+      <CardContent className="flex flex-row justify-end">
+        <Button disabled={owned} onClick={handleClick}>
+          {owned ? "Owned" : `$ ${price}`}
+        </Button>
+      </CardContent>
+    </Card>
   );
 }

@@ -42,3 +42,31 @@ export const purchasedCatToysAtomWithPersistence = atom(
     localStorage.setItem(PURCHASED_CAT_TOYS, JSON.stringify(newArr));
   },
 );
+
+const HIRED_EMPLOYES = "hiredEmployes";
+
+const hiredEmployeesAtom = atom<number[]>(
+  JSON.parse(localStorage.getItem(HIRED_EMPLOYES) ?? "[]") as number[],
+);
+
+export const hiredEmployeesAtomWithPersistence = atom(
+  (get) => get(hiredEmployeesAtom),
+  (get, set, newArr: number[]) => {
+    set(hiredEmployeesAtom, newArr);
+    localStorage.setItem(HIRED_EMPLOYES, JSON.stringify(newArr));
+  },
+);
+
+const OWNED_MENU_ITEMS = "ownedMenuItems";
+
+const ownedMenuItemsAtom = atom<number[]>(
+  JSON.parse(localStorage.getItem(OWNED_MENU_ITEMS ) ?? "[]") as number[],
+);
+
+export const ownedMenuItemsAtomWithPersistence = atom(
+  (get) => get(ownedMenuItemsAtom ),
+  (get, set, newArr: number[]) => {
+    set(ownedMenuItemsAtom, newArr);
+    localStorage.setItem(OWNED_MENU_ITEMS, JSON.stringify(newArr));
+  },
+);
