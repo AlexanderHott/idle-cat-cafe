@@ -115,6 +115,7 @@ export default function Game() {
     };
 
     window.addEventListener("resize", updateImageDims);
+    window.addEventListener("orientationchange", updateImageDims);
     return () => window.removeEventListener("resize", updateImageDims);
   }, []);
   // Update width on image load
@@ -171,7 +172,7 @@ export default function Game() {
       <WelcomeBackModal defaultOpen={showWelcomeBackModal} diff={diff} />
       <Image
         ref={ref}
-        width={window.innerHeight * 1692 / 505 }
+        width={Math.floor(window.innerHeight * 1692 / 505)}
         height={window.innerHeight}
         src="/assets/bg.webp"
         alt="background"
