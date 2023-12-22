@@ -223,8 +223,8 @@ function CatToy({ id, name, desc, price, image }: CatToy) {
           <Image src={image} alt={name} width={24} height={24} />
         </div>
       </CardHeader>
-      <CardContent className="flex flex-row justify-end">
-        <Button disabled={owned} onClick={handleClick}>
+      <CardContent className="flex flex-row">
+        <Button disabled={owned} onClick={handleClick} className="grow">
           {owned ? "Owned" : `$ ${price}`}
         </Button>
       </CardContent>
@@ -262,7 +262,7 @@ function Employee({ id, name, desc, price, image }: CatToy) {
         </div>
       </CardHeader>
       <CardContent className="flex flex-row justify-end">
-        <Button disabled={hired} onClick={handleClick}>
+        <Button disabled={hired} onClick={handleClick} className="grow">
           {hired ? "Hired" : `$ ${price}`}
         </Button>
       </CardContent>
@@ -299,7 +299,7 @@ function MenuItem({ id, name, desc, price, image }: CatToy) {
         </div>
       </CardHeader>
       <CardContent className="flex flex-row justify-end">
-        <Button disabled={owned} onClick={handleClick}>
+        <Button disabled={owned} onClick={handleClick} className="grow">
           {owned ? "Owned" : `$ ${price}`}
         </Button>
       </CardContent>
