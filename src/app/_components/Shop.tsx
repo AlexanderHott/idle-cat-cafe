@@ -27,7 +27,7 @@ import {
 } from "~/components/ui/sheet";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
 import { ScrollArea } from "~/components/ui/scroll-area";
-import { 
+import {
   purchasedCatToysAtomWithPersistence,
   hiredEmployeesAtomWithPersistence,
   ownedMenuItemsAtomWithPersistence,
@@ -155,14 +155,14 @@ export function Shop() {
           <ShoppingCart />
         </Button>
       </SheetTrigger>
-      <SheetContent className="flex flex-col">
+      <SheetContent className="flex flex-col grow-0">
         <SheetHeader>
           <SheetTitle>Shop</SheetTitle>
           <SheetDescription>Buy some cute cat toys!</SheetDescription>
         </SheetHeader>
 
-        <ScrollArea className="">
-        <Tabs defaultValue="toys" className="flex flex-col">
+        {/*<ScrollArea className="">*/}
+        <Tabs defaultValue="toys" className="flex flex-col grow min-h-0">
           <TabsList className="w-full">
             <TabsTrigger className="w-full" value="toys">
               Toys
@@ -174,17 +174,19 @@ export function Shop() {
               Menu
             </TabsTrigger>
           </TabsList>
-            <TabsContent value="toys">
-              <ToyShop />
-            </TabsContent>
-            <TabsContent value="hire">
-              <HireShop />
-            </TabsContent>
-            <TabsContent value="menu">
-              <MenuShop />
-            </TabsContent>
+<ScrollArea>
+	<TabsContent value="toys">
+            <ToyShop />
+          </TabsContent>
+          <TabsContent value="hire">
+            <HireShop />
+          </TabsContent>
+          <TabsContent value="menu">
+            <MenuShop />
+          </TabsContent>
+</ScrollArea>
         </Tabs>
-          </ScrollArea>
+        {/* </ScrollArea>*/}
       </SheetContent>
     </Sheet>
   );
@@ -192,11 +194,11 @@ export function Shop() {
 
 export function ToyShop() {
   return (
-      <div className="flex flex-col gap-2 pt-2">
-        {CAT_TOYS.map((toy) => (
-          <CatToy key={toy.id} {...toy} />
-        ))}
-      </div>
+    <div className="flex flex-col gap-2">
+      {CAT_TOYS.map((toy) => (
+        <CatToy key={toy.id} {...toy} />
+      ))}
+    </div>
   );
 }
 
@@ -232,18 +234,16 @@ function CatToy({ id, name, desc, price, image }: CatToy) {
 
 export function HireShop() {
   return (
-      <div className="flex flex-col gap-2 pt-2">
-        {EMPS.map((toy) => (
-          <Employee key={toy.id} {...toy} />
-        ))}
-      </div>
+    <div className="flex flex-col gap-2">
+      {EMPS.map((toy) => (
+        <Employee key={toy.id} {...toy} />
+      ))}
+    </div>
   );
 }
 
 function Employee({ id, name, desc, price, image }: CatToy) {
-  const [hiredEmps, setHiredEmps] = useAtom(
-    hiredEmployeesAtomWithPersistence,
-  );
+  const [hiredEmps, setHiredEmps] = useAtom(hiredEmployeesAtomWithPersistence);
   const [money, setMoney] = useAtom(moneyAtomWithPersistence);
   const hired = hiredEmps.includes(id);
   function handleClick() {
@@ -271,18 +271,16 @@ function Employee({ id, name, desc, price, image }: CatToy) {
 }
 export function MenuShop() {
   return (
-      <div className="flex flex-col gap-2 pt-2">
-        {MENU_ITEMS.map((toy) => (
-          <MenuItem key={toy.id} {...toy} />
-        ))}
-      </div>
+    <div className="flex flex-col gap-2">
+      {MENU_ITEMS.map((toy) => (
+        <MenuItem key={toy.id} {...toy} />
+      ))}
+    </div>
   );
 }
 
 function MenuItem({ id, name, desc, price, image }: CatToy) {
-  const [menuItems, setMenuItems] = useAtom(
-    ownedMenuItemsAtomWithPersistence,
-  );
+  const [menuItems, setMenuItems] = useAtom(ownedMenuItemsAtomWithPersistence);
   const [money, setMoney] = useAtom(moneyAtomWithPersistence);
   const owned = menuItems.includes(id);
   function handleClick() {

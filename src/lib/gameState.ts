@@ -60,11 +60,11 @@ export const hiredEmployeesAtomWithPersistence = atom(
 const OWNED_MENU_ITEMS = "ownedMenuItems";
 
 const ownedMenuItemsAtom = atom<number[]>(
-  JSON.parse(localStorage.getItem(OWNED_MENU_ITEMS ) ?? "[]") as number[],
+  JSON.parse(localStorage.getItem(OWNED_MENU_ITEMS) ?? "[]") as number[],
 );
 
 export const ownedMenuItemsAtomWithPersistence = atom(
-  (get) => get(ownedMenuItemsAtom ),
+  (get) => get(ownedMenuItemsAtom),
   (get, set, newArr: number[]) => {
     set(ownedMenuItemsAtom, newArr);
     localStorage.setItem(OWNED_MENU_ITEMS, JSON.stringify(newArr));

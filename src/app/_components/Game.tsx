@@ -9,6 +9,39 @@ const LAST_ACTIVE = "lastActive";
 const DIFF = "diff";
 const MONEY = "money";
 
+type Rarity = "COMMON" | "RARE" | "SUPER_RARE";
+type Cat = {
+  name: string;
+  image: string;
+  rarity: Rarity;
+};
+const CATS: Cat[] = [
+  {
+    name: "Peanut Butter",
+    image: "/assets/cats/peanut_butter.jpg",
+    rarity: "COMMON",
+  },
+  {
+    name: "Shadow",
+    image: "/assets/cats/shadow.jpg",
+    rarity: "RARE",
+  },
+  {
+    name: "Socrates",
+    image: "/assets/cats/socrates.jpg",
+    rarity: "SUPER_RARE",
+  },
+];
+
+const COMMON_SPAWN = 0.8;
+const RARE_SPAWN = 0.15;
+const SUPER_RARE_SPAWN = 0.05;
+
+const ONE_CAT = 0.4;
+const TWO_CAT = 0.3;
+const THREE_CAT = 0.2;
+const FOUR_CAT = 0.1;
+
 // Welcome back reward
 if (typeof window !== "undefined") {
   // Check if we're running in the browser.
@@ -63,6 +96,10 @@ export default function Game() {
   const diff = parseInt(localStorage.getItem(DIFF) ?? "0");
   const showWelcomeBackModal = diff > 10;
 
+  ///
+  /// Object positioning
+  ///
+
   const ref = useRef<HTMLImageElement>(null);
   const [loaded, setLoaded] = useState(false);
   const [width, setWidth] = useState(0);
@@ -97,6 +134,29 @@ export default function Game() {
   const dHeight = Math.floor((width / HEIGHT) * 10);
   const sWidth = Math.floor(width * 0.202);
   const sHeight = Math.floor((width / HEIGHT) * 10);
+
+  ///
+  /// calculate cat spawns
+  ///
+  // num cats
+  let numCats: number;
+  let rand = Math.random();
+  let todayCats: Cat[];
+  if (rand <= FOUR_CAT) {
+    numCats = 4;
+  } else if (rand <= FOUR_CAT + THREE_CAT) {
+    numCats = 3;
+  } else if (rand <= FOUR_CAT + THREE_CAT + TWO_CAT) {
+    numCats = 2;
+  } else {
+    numCats = 1;
+  }
+
+  for (let i = 0; i < numCats; i++) {
+    rand = Math.random();
+    // const cat =
+    // todayCats.push(undefined);
+  }
 
   return (
     <>
