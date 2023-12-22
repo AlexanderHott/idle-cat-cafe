@@ -155,14 +155,14 @@ export function Shop() {
           <ShoppingCart />
         </Button>
       </SheetTrigger>
-      <SheetContent className="flex flex-col grow-0">
+      <SheetContent className="flex grow-0 flex-col">
         <SheetHeader>
           <SheetTitle>Shop</SheetTitle>
           <SheetDescription>Buy some cute cat toys!</SheetDescription>
         </SheetHeader>
 
         {/*<ScrollArea className="">*/}
-        <Tabs defaultValue="toys" className="flex flex-col grow min-h-0">
+        <Tabs defaultValue="toys" className="flex min-h-0 grow flex-col">
           <TabsList className="w-full">
             <TabsTrigger className="w-full" value="toys">
               Toys
@@ -174,17 +174,17 @@ export function Shop() {
               Menu
             </TabsTrigger>
           </TabsList>
-<ScrollArea>
-	<TabsContent value="toys">
-            <ToyShop />
-          </TabsContent>
-          <TabsContent value="hire">
-            <HireShop />
-          </TabsContent>
-          <TabsContent value="menu">
-            <MenuShop />
-          </TabsContent>
-</ScrollArea>
+          <ScrollArea>
+            <TabsContent value="toys">
+              <ToyShop />
+            </TabsContent>
+            <TabsContent value="hire">
+              <HireShop />
+            </TabsContent>
+            <TabsContent value="menu">
+              <MenuShop />
+            </TabsContent>
+          </ScrollArea>
         </Tabs>
         {/* </ScrollArea>*/}
       </SheetContent>

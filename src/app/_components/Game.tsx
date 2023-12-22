@@ -3,6 +3,9 @@ import { useEffect, useRef, useState } from "react";
 import { WelcomeBackModal } from "./WelcomeBackModal";
 import { atom, useAtom } from "jotai";
 import { Shop } from "./Shop";
+import Image from "next/image";
+import { Cat } from "lucide-react";
+import { Button } from "~/components/ui/button";
 
 const LAST_LOGIN = "lastLogin";
 const LAST_ACTIVE = "lastActive";
@@ -88,9 +91,6 @@ export const lastActiveAtomWithPersistence = atom(
 );
 
 export default function Game() {
-  if (typeof window === "undefined") {
-    return null;
-  }
   const [money, setMoney] = useAtom(moneyAtomWithPersistence);
   const [lastActive, setLastActive] = useAtom(lastActiveAtomWithPersistence);
   const diff = parseInt(localStorage.getItem(DIFF) ?? "0");
@@ -103,20 +103,24 @@ export default function Game() {
   const ref = useRef<HTMLImageElement>(null);
   const [loaded, setLoaded] = useState(false);
   const [width, setWidth] = useState(0);
+  const [height, setHeight] = useState(0);
 
   // Update width on window resize
   useEffect(() => {
-    const updateImageHeight = () => {
+    const updateImageDims = () => {
       const newWidth = ref.current ? ref.current.offsetWidth : 0;
       setWidth(newWidth);
+      const newHeight = ref.current ? ref.current.offsetHeight : 0;
+      setHeight(newHeight);
     };
 
-    window.addEventListener("resize", updateImageHeight);
-    return () => window.removeEventListener("resize", updateImageHeight);
+    window.addEventListener("resize", updateImageDims);
+    return () => window.removeEventListener("resize", updateImageDims);
   }, []);
   // Update width on image load
   useEffect(() => {
     setWidth(ref.current ? ref.current.offsetWidth : 0);
+    setHeight(ref.current ? ref.current.offsetHeight : 0);
   }, [ref.current, loaded]);
 
   // last active time
@@ -129,11 +133,15 @@ export default function Game() {
     return () => clearInterval(interval); // This represents the unmount function, in which you need to clear your interval to prevent memory leaks.
   }, []);
 
-  const HEIGHT = 400;
-  const dWidth = Math.floor(width * 0.03);
-  const dHeight = Math.floor((width / HEIGHT) * 10);
+  const cat1Pos = {
+    top: height * 0.4925, // percent of height
+    left: width * 0.3, // percent of width
+    width: width * 0.03,
+    height: width * 0.03,
+  };
+
   const sWidth = Math.floor(width * 0.202);
-  const sHeight = Math.floor((width / HEIGHT) * 10);
+  const sHeight = Math.floor((width / height) * 10);
 
   ///
   /// calculate cat spawns
@@ -161,18 +169,31 @@ export default function Game() {
   return (
     <>
       <WelcomeBackModal defaultOpen={showWelcomeBackModal} diff={diff} />
-      <img
+      <Image
         ref={ref}
-        src="/space-h.jpeg"
+        width={window.innerHeight * 1692 / 505 }
+        height={window.innerHeight}
+        src="/assets/bg.webp"
+        alt="background"
         loading="eager"
-        className="pointer-events-none -z-10 h-full max-w-none overflow-x-scroll"
+        priority
+        className="rendering-pixelated pointer-events-none -z-10 h-full max-w-none overflow-x-scroll "
         onLoad={() => setLoaded(true)}
+      />
+      <img
+        src="/assets/cat.png"
+        loading="eager"
+        className="absolute"
+        style={cat1Pos}
       />
       <div className="fixed right-2 top-2 flex flex-col items-end gap-2 p-2">
         <div className="rounded bg-black p-2 text-white">${money}</div>
         <Shop />
+        <Button size="icon">
+          <Cat />
+        </Button>
       </div>
-      <div
+      {/*<div
         className={`text-clamp absolute left-0 z-10 bg-black`}
         style={{
           top: `${dHeight}px`,
@@ -193,7 +214,7 @@ export default function Game() {
         }}
       >
         {width}
-      </div>
+      </div>*/}
     </>
   );
 }
