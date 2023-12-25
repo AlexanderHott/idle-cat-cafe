@@ -58,6 +58,7 @@ export const PICK_COUNT_PROBABILITIES = [
   [0.15, 0.25, 0.4, 0.2],
   [0.1, 0.25, 0.4, 0.25],
   [0.05, 0.15, 0.4, 0.4],
+  [0.05, 0.5, 0.3, 0.6],
 ];
 
 export const RARE_PROBABILITIES = [

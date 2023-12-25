@@ -203,22 +203,17 @@ export default function Game() {
     return () => clearInterval(interval); // This represents the unmount function, in which you need to clear your interval to prevent memory leaks.
   }, []);
 
-  const BG_WIDTH = 1692;
-  const BG_HEIGHT = 615;
-
-  const FROG_BED_W = 374;
-  const FROG_BED_H = 244;
-
-  const cat1Pos = {
-    bottom: 0,
-    left: width * 0.33, // percent of width
-    width: width * 0.15,
-    height: (FROG_BED_W / FROG_BED_H) * 110,
-  };
-
   const TOY_BUTTON_1 = {
     bottom: height * 0.1,
     left: width * 0.42,
+  };
+  const TOY_BUTTON_2 = {
+    bottom: height * 0.1,
+    left: (width * 2) / 3,
+  };
+  const TOY_BUTTON_3 = {
+    bottom: height * 0.1,
+    left: width * 0.81,
   };
 
   return (
@@ -234,6 +229,24 @@ export default function Game() {
         // priority
         className="rendering-crisp-edges pointer-events-none -z-20 h-full max-w-none overflow-x-scroll "
         onLoad={() => setLoaded(true)}
+      />
+      <div
+        className="bg-rgb absolute z-20 animate-spin rounded-full"
+        style={{
+          width: width * 0.05,
+          height: width * 0.05,
+          top: height * 0.51,
+          left: width * 0.16,
+        }}
+      />
+      <img
+        src="/assets/baristas/axel-o/0.gif"
+        className="absolute z-30"
+        style={{
+          left: width * 0.12,
+          top: height * 0.2731,
+          height: height * 0.4,
+        }}
       />
       {/*<img
         src="/assets/cats/murchyk/frog-bed.webp"
@@ -254,28 +267,8 @@ export default function Game() {
       </div>
       {/* Add cat toy buttons */}
       <ChooseToy style={TOY_BUTTON_1} index={1} />
-      {/*<div
-        className={`text-clamp absolute left-0 z-10 bg-black`}
-        style={{
-          top: `${dHeight}px`,
-          left: `${dWidth}px`,width
-          width: width * 0.02,
-          height: widh * 0.01,
-        }}
-      >
-        {width}
-      </div>
-      <div
-        className={`text-clamp absolute left-0 z-10 bg-orange-500`}
-        style={{
-          top: `${sHeight}px`,
-          left: `${sWidth}px`,
-          width: width * 0.014,
-          height: width * 0.01,
-        }}
-      >
-        {width}
-      </div>*/}
+      <ChooseToy style={TOY_BUTTON_2} index={2} />
+      <ChooseToy style={TOY_BUTTON_3} index={3} />
     </>
   );
 }
@@ -287,13 +280,13 @@ function ChooseToy({
   style: { left: number; bottom: number };
   index: number;
 }) {
-  const unequpiedToys = false;
   const [currentToys, setCurrentToys] = useAtom(currentToysAtom);
   const [catToys] = useAtom(catToyAtom);
+  const unequpiedToys =
+    currentToys.filter((v) => v !== null).length < catToys.length;
   return (
     <>
-      {unequpiedToys && <div />}
-      {currentToys[index] === null && (
+      {unequpiedToys && currentToys[index] === null && (
         <div
           className="absolute z-10 h-8 w-8 animate-ping rounded-full bg-slate-900"
           style={style}

@@ -95,3 +95,18 @@ body {
 * {
   font-family: var(--font-sans);
 }
+
+.bg-rgb {
+  background: conic-gradient(
+    red,
+    orange,
+    yellow,
+    green,
+    blue,
+    purple,
+    blue,
+    green,
+    yellow,
+    orange
+  );
+}
