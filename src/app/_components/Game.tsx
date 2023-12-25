@@ -231,7 +231,7 @@ export default function Game() {
         onLoad={() => setLoaded(true)}
       />
       <div
-        className="bg-rgb absolute z-20 animate-spin rounded-full"
+        className="absolute z-20 bg-cyan-500"
         style={{
           width: width * 0.05,
           height: width * 0.05,
