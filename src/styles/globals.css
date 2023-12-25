@@ -91,3 +91,7 @@ body {
 .rendering-pixelated {
   image-rendering: pixelated;
 }
+
+* {
+  font-family: var(--font-sans);
+}

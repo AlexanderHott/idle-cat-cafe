@@ -28,122 +28,136 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
 import { ScrollArea } from "~/components/ui/scroll-area";
 import {
-  purchasedCatToysAtomWithPersistence,
-  hiredEmployeesAtomWithPersistence,
-  ownedMenuItemsAtomWithPersistence,
+  birastasAtom,
+  catToyAtom,
+  menuItemsAtom,
+  moneyAtom,
 } from "~/lib/gameState";
 import { useAtom } from "jotai";
-import { moneyAtomWithPersistence } from "~/app/_components/Game";
 
-type CatToy = {
+type CatToyT = {
   id: number;
   name: string;
   desc: string;
   price: number;
   image: string;
 };
-const CAT_TOYS: CatToy[] = [
+export const CAT_TOYS: CatToyT[] = [
   {
     id: 0,
-    name: "Cardboard box 0",
+    name: "Cardboard Box",
     desc: "A cardboard box",
     price: 10,
-    image: "/box.png",
+    image: "/assets/cat-toys/cardboard-box.png",
   },
   {
     id: 1,
-    name: "Cardboard box 1",
-    desc: "A cardboard box",
-    price: 10,
-    image: "/box.png",
+    name: "Ball",
+    desc: "boing boing boing",
+    price: 120,
+    image: "/assets/cat-toys/ball.png",
   },
   {
     id: 2,
-    name: "Cardboard box 2",
-    desc: "A cardboard box",
-    price: 10,
-    image: "/box.png",
-  },
-];
-type Emp = {
-  id: number;
-  name: string;
-  desc: string;
-  price: number;
-  image: string;
-};
-const EMPS: Emp[] = [
-  {
-    id: 0,
-    name: "AAron O",
-    desc: "Based",
-    price: 69,
-    image: "/box.png",
-  },
-  {
-    id: 1,
-    name: "AAron Z",
-    desc: "Based but 🇧",
-    price: 69420,
-    image: "/box.png",
-  },
-  {
-    id: 2,
-    name: "O boy i love cats",
-    desc: "I'm only here for the cats",
-    price: 10,
-    image: "/box.png",
+    name: "Cat Bed",
+    desc: "Zzz",
+    price: 175,
+    image: "/assets/cat-toys/cat-bed.png",
   },
   {
     id: 3,
-    name: "Short person",
-    desc: "I like to draw",
-    price: 10,
-    image: "/box.png",
+    name: "Frog Themed Cat Bed",
+    desc: "Zzz but in a frog",
+    price: 750,
+    image: "/assets/cat-toys/frog-cat-bed.png",
   },
   {
     id: 4,
-    name: "Short person",
-    desc: "I like to draw",
-    price: 10,
-    image: "/box.png",
-  },
-  {
-    id: 5,
-    name: "Short person",
-    desc: "I like to draw",
-    price: 10,
-    image: "/box.png",
+    name: "Cat Tree",
+    desc: "Cats do grow on trees",
+    price: 5000,
+    image: "/assets/cat-toys/cat-tree.png",
   },
 ];
-type MenuItem = {
+type BaristaT = {
   id: number;
   name: string;
   desc: string;
   price: number;
   image: string;
 };
-const MENU_ITEMS: MenuItem[] = [
+const BARISTAS: BaristaT[] = [
   {
     id: 0,
-    name: "Tea",
-    desc: "Some tea i guess",
+    name: "Axel O",
+    desc: "Based",
     price: 10,
-    image: "/box.png",
+    image: "/assets/baristas/axel-o.png",
   },
   {
     id: 1,
-    name: "Quassan't",
-    desc: "Are you gonna finish that -- quassan't",
-    price: 10000,
-    image: "/box.png",
+    name: "Annabelle (Remote)",
+    desc: "I like to draw",
+    price: 500,
+    image: "/assets/baristas/annabelle.png",
   },
   {
     id: 2,
-    name: "Dehydrated water",
-    desc: "pure air; no bs",
-    price: 4,
-    image: "/box.png",
+    name: "Axel Z (Remote)",
+    desc: "Based but Brazil",
+    price: 1000,
+    image: "/assets/baristas/axel-z.png",
+  },
+  {
+    id: 3,
+    name: "Oli (Remote)",
+    desc: "I'm only here for the cats",
+    price: 10000,
+    image: "/assets/baristas/oli.png",
+  },
+];
+type MenuItemT = {
+  id: number;
+  name: string;
+  desc: string;
+  price: number;
+  image: string;
+};
+const MENU_ITEMS: MenuItemT[] = [
+  {
+    id: 0,
+    name: "Black Tea",
+    desc: "Classic Black Tea",
+    price: 100,
+    image: "/assets/menu/black-tea.png",
+  },
+  {
+    id: 1,
+    name: "Matcha Tea",
+    desc: "Black Tea, but green",
+    price: 150,
+    image: "/assets/menu/matcha-tea.png",
+  },
+  {
+    id: 2,
+    name: "Pancakes",
+    desc: "Bumpier than Nebraska",
+    price: 250,
+    image: "/assets/menu/pancakes.png",
+  },
+  {
+    id: 3,
+    name: "Baconeggandcheese",
+    desc: "baconeggandcheese",
+    price: 3000,
+    image: "/assets/menu/baconeggandcheese.png",
+  },
+  {
+    id: 4,
+    name: "Cinnamon Roll",
+    desc: "Warning: May cause spontaneous sugar rush",
+    price: 7500,
+    image: "/assets/menu/cinnamon-roll.png",
   },
 ];
 
@@ -202,15 +216,13 @@ export function ToyShop() {
   );
 }
 
-function CatToy({ id, name, desc, price, image }: CatToy) {
-  const [purchasedToys, setPurchasedToys] = useAtom(
-    purchasedCatToysAtomWithPersistence,
-  );
-  const [money, setMoney] = useAtom(moneyAtomWithPersistence);
-  const owned = purchasedToys.includes(id);
+function CatToy({ id, name, desc, price, image }: CatToyT) {
+  const [catToys, setCatToys] = useAtom(catToyAtom);
+  const [money, setMoney] = useAtom(moneyAtom);
+  const owned = catToys.includes(id);
   function handleClick() {
-    setPurchasedToys([...purchasedToys, id]);
-    setMoney((m) => m - price);
+    setCatToys([...catToys, id]);
+    setMoney(money - price);
   }
   return (
     <Card>
@@ -220,7 +232,7 @@ function CatToy({ id, name, desc, price, image }: CatToy) {
           <CardDescription>{desc}</CardDescription>
         </div>
         <div>
-          <Image src={image} alt={name} width={24} height={24} />
+          <Image src={image} alt={name} width={48} height={48} />
         </div>
       </CardHeader>
       <CardContent className="flex flex-row">
@@ -235,20 +247,20 @@ function CatToy({ id, name, desc, price, image }: CatToy) {
 export function HireShop() {
   return (
     <div className="flex flex-col gap-2">
-      {EMPS.map((toy) => (
-        <Employee key={toy.id} {...toy} />
+      {BARISTAS.map((toy) => (
+        <Barista key={toy.id} {...toy} />
       ))}
     </div>
   );
 }
 
-function Employee({ id, name, desc, price, image }: CatToy) {
-  const [hiredEmps, setHiredEmps] = useAtom(hiredEmployeesAtomWithPersistence);
-  const [money, setMoney] = useAtom(moneyAtomWithPersistence);
-  const hired = hiredEmps.includes(id);
+function Barista({ id, name, desc, price, image }: CatToyT) {
+  const [birastas, setBirastas] = useAtom(birastasAtom);
+  const [money, setMoney] = useAtom(moneyAtom);
+  const hired = birastas.includes(id);
   function handleClick() {
-    setHiredEmps([...hiredEmps, id]);
-    setMoney((m) => m - price);
+    setBirastas([...birastas, id]);
+    setMoney(money - price);
   }
   return (
     <Card>
@@ -279,13 +291,13 @@ export function MenuShop() {
   );
 }
 
-function MenuItem({ id, name, desc, price, image }: CatToy) {
-  const [menuItems, setMenuItems] = useAtom(ownedMenuItemsAtomWithPersistence);
-  const [money, setMoney] = useAtom(moneyAtomWithPersistence);
+function MenuItem({ id, name, desc, price, image }: CatToyT) {
+  const [menuItems, setMenuItems] = useAtom(menuItemsAtom);
+  const [money, setMoney] = useAtom(moneyAtom);
   const owned = menuItems.includes(id);
   function handleClick() {
     setMenuItems([...menuItems, id]);
-    setMoney((m) => m - price);
+    setMoney(money - price);
   }
   return (
     <Card>
