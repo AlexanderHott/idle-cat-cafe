@@ -477,7 +477,6 @@ const ChooseToyButton = forwardRef<
   }
   const toy = CAT_TOYS[currentToy]!;
   return (
-    // @ts-expect-error trust me (button props on img element still sort of works)
     <img
       src={toy.image}
       className="absolute -translate-x-1/2 transform"
