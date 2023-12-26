@@ -361,7 +361,7 @@ function CatToySlot({
       style={{
         left: style.left,
         bottom: 0,
-        height: height * (style.height ?? 1),
+        height: height * toy.height,
       }}
     />
   );
