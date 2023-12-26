@@ -70,3 +70,42 @@ export const RARE_PROBABILITIES = [
   // 0.45, // common: 0.55,
   // 0.5, // common: 0.5,
 ];
+
+export function placeCatsOnToys(
+  toys: (number | null)[],
+  cats: number[],
+): (number | null)[] {
+  // Create an array to represent the placements of cats
+  const placements: (number | null)[] = new Array(toys.length).fill(
+    null,
+  ) as null[];
+
+  // Shuffle the cats and toys to randomize the assignment
+  const shuffledCats = [...cats].sort(() => Math.random() - 0.5);
+  const toyIndices = toys
+    .map((toy, index) => (toy !== null ? index : null))
+    .filter((index) => index !== null) as number[];
+  toyIndices.sort(() => Math.random() - 0.5);
+
+  // Assign cats to toys
+  for (const cat of shuffledCats) {
+    if (toyIndices.length > 0) {
+      // If there's a toy available, place the cat on the toy
+      const toyIndex = toyIndices.pop()!;
+      placements[toyIndex] = cat;
+    } else {
+      // If no toys are available, find an empty space (null)
+      const emptySpaces = placements
+        .map((place, index) => (place === null ? index : null))
+        .filter((index) => index !== null) as number[];
+      if (emptySpaces.length > 0) {
+        // SAFETY: always in bounds
+        const emptyIndex =
+          emptySpaces[Math.floor(Math.random() * emptySpaces.length)]!;
+        placements[emptyIndex] = cat;
+      }
+    }
+  }
+
+  return placements;
+}

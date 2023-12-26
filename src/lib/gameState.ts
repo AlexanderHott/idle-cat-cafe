@@ -101,7 +101,12 @@ export const {
   atom: currentCatsAtom,
   get: uncheckedGetCurrentCats,
   set: uncheckedSetCurrentCats,
-} = generatePersistantAtom<number[]>(CURRENT_CATS, []);
+} = generatePersistantAtom<(number | null)[]>(CURRENT_CATS, [
+  null,
+  null,
+  null,
+  null,
+]);
 
 export const {
   atom: moneyAtom,
@@ -131,3 +136,14 @@ export const {
   null,
   null,
 ]);
+
+// export const {
+//   atom: currentToysAtom,
+//   get: uncheckedGetCurrentToys,
+//   set: uncheckedSetCurrentToys,
+// } = generatePersistantAtom<(number | null)[]>(CURRENT_TOYS, [
+//   null,
+//   null,
+//   null,
+//   null,
+// ]);

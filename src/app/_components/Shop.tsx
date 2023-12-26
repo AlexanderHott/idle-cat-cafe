@@ -41,6 +41,8 @@ type CatToyT = {
   desc: string;
   price: number;
   image: string;
+  height: number;
+  cats: string[];
 };
 export const CAT_TOYS: CatToyT[] = [
   {
@@ -49,6 +51,13 @@ export const CAT_TOYS: CatToyT[] = [
     desc: "A cardboard box",
     price: 10,
     image: "/assets/cat-toys/cardboard-box.png",
+    height: 0.2,
+    cats: [
+      "/assets/cats/murchyk/cardboard-box.png",
+      "/assets/cats/murchyk/cardboard-box.png",
+      "/assets/cats/murchyk/cardboard-box.png",
+      "/assets/cats/murchyk/cardboard-box.png",
+    ],
   },
   {
     id: 1,
@@ -56,6 +65,13 @@ export const CAT_TOYS: CatToyT[] = [
     desc: "boing boing boing",
     price: 120,
     image: "/assets/cat-toys/ball.png",
+    height: 0.1,
+    cats: [
+      "/assets/cats/murchyk/ball.webp",
+      "/assets/cats/murchyk/ball.webp",
+      "/assets/cats/murchyk/ball.webp",
+      "/assets/cats/murchyk/ball.webp",
+    ],
   },
   {
     id: 2,
@@ -63,6 +79,13 @@ export const CAT_TOYS: CatToyT[] = [
     desc: "Zzz",
     price: 175,
     image: "/assets/cat-toys/cat-bed.png",
+    height: 0.08,
+    cats: [
+      "/assets/cats/murchyk/cat-bed.webp",
+      "/assets/cats/murchyk/cat-bed.webp",
+      "/assets/cats/murchyk/cat-bed.webp",
+      "/assets/cats/murchyk/cat-bed.webp",
+    ],
   },
   {
     id: 3,
@@ -70,6 +93,13 @@ export const CAT_TOYS: CatToyT[] = [
     desc: "Zzz but in a frog",
     price: 750,
     image: "/assets/cat-toys/frog-cat-bed.png",
+    height: 0.2,
+    cats: [
+      "/assets/cats/murchyk/frog-cat-bed.webp",
+      "/assets/cats/murchyk/frog-cat-bed.webp",
+      "/assets/cats/murchyk/frog-cat-bed.webp",
+      "/assets/cats/murchyk/frog-cat-bed.webp",
+    ],
   },
   {
     id: 4,
@@ -77,6 +107,13 @@ export const CAT_TOYS: CatToyT[] = [
     desc: "Cats do grow on trees",
     price: 5000,
     image: "/assets/cat-toys/cat-tree.png",
+    height: 0.7,
+    cats: [
+      "/assets/cats/murchyk/cat-tree.webp",
+      "/assets/cats/murchyk/cat-tree.webp",
+      "/assets/cats/murchyk/cat-tree.webp",
+      "/assets/cats/murchyk/cat-tree.webp",
+    ],
   },
 ];
 type BaristaT = {

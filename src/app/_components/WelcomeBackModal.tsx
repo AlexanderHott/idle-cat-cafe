@@ -36,7 +36,7 @@ export function WelcomeBackModal({
   const profit = calculateProfit(
     menuItems.length,
     baristas.length,
-    cats.length, // TODO: split common and rare cats
+    cats.filter((c) => c !== null).length, // TODO: split common and rare cats
     0,
     diff,
   );

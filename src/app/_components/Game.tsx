@@ -20,6 +20,7 @@ import {
   PICK_COUNT_PROBABILITIES,
   RARE_PROBABILITIES,
   pickRandomItems,
+  placeCatsOnToys,
 } from "~/lib/spawning";
 
 import {
@@ -32,6 +33,7 @@ import {
   uncheckedGetBaristas,
   uncheckedGetCatToys,
   uncheckedGetCurrentCats,
+  uncheckedGetCurrentToys,
   uncheckedGetLastActive,
   uncheckedGetLastCatSpawn,
   uncheckedGetMenuItems,
@@ -39,9 +41,11 @@ import {
   uncheckedSetCurrentCats,
   uncheckedSetDiff,
   uncheckedSetLastActive,
+  uncheckedSetLastCatSpawn,
   uncheckedSetLastLogin,
   uncheckedSetMoney,
 } from "~/lib/gameState";
+import { DialogTriggerProps } from "@radix-ui/react-dialog";
 
 type Rarity = "COMMON" | "RARE";
 type Cat = {
@@ -51,7 +55,6 @@ type Cat = {
   assetPath: string;
   rarity: Rarity;
 };
-
 const RARE_CATS: Cat[] = [
   {
     id: 0,
@@ -82,6 +85,7 @@ const RARE_CATS: Cat[] = [
     rarity: "RARE",
   },
 ];
+
 const COMMON_CATS: Cat[] = [];
 
 const CATS = RARE_CATS.concat(COMMON_CATS);
@@ -102,15 +106,27 @@ if (typeof window !== "undefined") {
   const catToysOwned = uncheckedGetCatToys().length;
   const lastCatSpawn = uncheckedGetLastCatSpawn();
 
-  let cats = uncheckedGetCurrentCats();
+  let catPositions = uncheckedGetCurrentCats();
+  const currentCats = catPositions.filter((c) => c !== null) as number[];
   if (lastCatSpawn == 0 || diff > 60 * 60 * 6) {
-    cats = pickRandomItems(
+    catPositions = pickRandomItems(
       CATS, // TODO: COMMON_CATS
       [], // TODO: RARE_CATS
       PICK_COUNT_PROBABILITIES[catToysOwned]!,
       RARE_PROBABILITIES[catToysOwned]!,
     ).map((c) => c.id);
-    uncheckedSetCurrentCats(cats);
+
+    const currentToys = uncheckedGetCurrentToys();
+    const catPlacements = placeCatsOnToys(
+      currentToys,
+      catPositions.filter((c) => c !== null) as number[],
+    );
+    uncheckedSetCurrentCats(catPlacements);
+    console.log("set cc", catPlacements);
+    uncheckedSetLastCatSpawn(now);
+    console.log("[respawn] Cat placements", catPlacements);
+  } else {
+    console.log("[old spawn] cat placements", catPositions);
   }
 
   // Welcome back reward
@@ -121,7 +137,7 @@ if (typeof window !== "undefined") {
   const profit = calculateProfit(
     menuItemsOwned,
     baristasHired,
-    cats.length, // TODO: split common and rare cats
+    currentCats.length, // TODO: split common and rare cats
     0,
     diff,
   );
@@ -130,28 +146,6 @@ if (typeof window !== "undefined") {
   // console.log("diff", diff);
   uncheckedSetMoney(money + profit);
 }
-
-// const moneyAtom = atom(parseInt(localStorage.getItem("money") ?? "20"));
-//
-// export const moneyAtomWithPersistence = atom(
-//   (get) => get(moneyAtom),
-//   (get, set, newMoney: (m: number) => number) => {
-//     const newM = newMoney(get(moneyAtom));
-//     console.log("Setting money in local storage", newM);
-//     set(moneyAtom, newM);
-//     localStorage.setItem(MONEY, newM.toString());
-//   },
-// );
-
-// const lastActiveAtom = atom(parseInt(localStorage.getItem(LAST_ACTIVE) ?? "0"));
-//
-// export const lastActiveAtomWithPersistence = atom(
-//   (get) => get(lastActiveAtom),
-//   (get, set, newTime: number) => {
-//     set(lastActiveAtom, newTime);
-//     localStorage.setItem(LAST_ACTIVE, newTime.toString());
-//   },
-// );
 
 export default function Game() {
   const [money, setMoney] = useAtom(moneyAtom);
@@ -166,6 +160,7 @@ export default function Game() {
   ///
 
   const ref = useRef<HTMLImageElement>(null);
+  // TODO switch width and height to jotai Atoms
   const [loaded, setLoaded] = useState(false);
   const [width, setWidth] = useState(0);
   const [height, setHeight] = useState(0);
@@ -200,7 +195,7 @@ export default function Game() {
       setLastActive(unixTimestamp);
     }, 5_000 /*5s*/);
 
-    return () => clearInterval(interval); // This represents the unmount function, in which you need to clear your interval to prevent memory leaks.
+    return () => clearInterval(interval);
   }, []);
 
   const TOY_BUTTON_1 = {
@@ -216,6 +211,10 @@ export default function Game() {
     left: width * 0.81,
   };
 
+  ///
+  /// Cat Placement
+  ///
+
   return (
     <>
       <WelcomeBackModal defaultOpen={showWelcomeBackModal} diff={diff} />
@@ -230,6 +229,7 @@ export default function Game() {
         className="rendering-crisp-edges pointer-events-none -z-20 h-full max-w-none overflow-x-scroll "
         onLoad={() => setLoaded(true)}
       />
+      {/* TODO: Fix gif transparency */}
       <div
         className="absolute z-20 bg-cyan-500"
         style={{
@@ -266,19 +266,77 @@ export default function Game() {
         </Button>
       </div>
       {/* Add cat toy buttons */}
-      <ChooseToy style={TOY_BUTTON_1} index={1} />
-      <ChooseToy style={TOY_BUTTON_2} index={2} />
-      <ChooseToy style={TOY_BUTTON_3} index={3} />
+      {/*<ChooseToy style={TOY_BUTTON_1} index={1} height={height} />*/}
+      {/*<ChooseToy style={TOY_BUTTON_2} index={2} height={height} />*/}
+      {/*<ChooseToy style={TOY_BUTTON_3} index={3} height={height} />*/}
+      <CatToySlot style={TOY_BUTTON_1} index={1} height={height} />
+      <CatToySlot style={TOY_BUTTON_2} index={2} height={height} />
+      <CatToySlot style={TOY_BUTTON_3} index={3} height={height} />
     </>
+  );
+}
+
+function CatToySlot({
+  style,
+  height,
+  index,
+}: {
+  height: number;
+  index: number;
+  style: { bottom: number; left: number };
+}) {
+  const [currentToys] = useAtom(currentToysAtom);
+  const [currentCats] = useAtom(currentCatsAtom);
+  // const firstCat = currentCats[0] ?? 0;
+  // const firstToyIdx = currentToys.filter((v) => v !== null)[0]!;
+  // const firstToy = CAT_TOYS[firstToyIdx]!;
+  const hasCat = currentCats[index] !== null;
+  const hasToy = currentToys[index] !== null;
+  console.log("slot", index, "hascat", hasCat, "hastoy", hasToy);
+  if (!hasCat) {
+    console.log("Slot", index, "no cat");
+    return <ChooseToy style={style} height={height} index={index} />;
+  }
+  console.log("debug", index, currentCats);
+  const catIdx = currentCats[index]!;
+
+  if (hasToy) {
+    const toy = CAT_TOYS[currentToys[index]!]!;
+    console.log("Slot", index, "hasToy", toy, catIdx, toy.cats[catIdx]);
+    return (
+      <img
+        src={toy.cats[catIdx]}
+        className="absolute -translate-x-1/2 transform"
+        style={{
+          left: style.left,
+          bottom: 0,
+          height: height * toy.height,
+        }}
+      />
+    );
+  }
+  const cat = CATS[catIdx]!;
+  return (
+    <img
+      src={cat.assetPath + "default.gif"}
+      className="absolute -translate-x-1/2 transform"
+      style={{
+        left: style.left,
+        bottom: 0,
+        height: height * 0.1,
+      }}
+    />
   );
 }
 
 function ChooseToy({
   style,
   index,
+  height,
 }: {
   style: { left: number; bottom: number };
   index: number;
+  height: number;
 }) {
   const [currentToys, setCurrentToys] = useAtom(currentToysAtom);
   const [catToys] = useAtom(catToyAtom);
@@ -295,20 +353,11 @@ function ChooseToy({
 
       <Sheet>
         <SheetTrigger asChild>
-          {currentToys[index] !== null ? (
-            <img
-              src={CAT_TOYS[currentToys[index]!]!.image}
-              className="absolute -translate-x-1/2 transform"
-              style={{ left: style.left, bottom: 0 }}
-            />
-          ) : (
-            <Button
-              className={`absolute z-20 h-8 w-8 rounded-full`}
-              style={style}
-            >
-              +
-            </Button>
-          )}
+          <ChooseToyButton
+            style={style}
+            currentToy={currentToys[index]!}
+            height={height}
+          />
         </SheetTrigger>
         <SheetContent className="flex grow-0 flex-col">
           <SheetHeader>
@@ -320,7 +369,7 @@ function ChooseToy({
           {catToys
             .map((idx) => CAT_TOYS[idx])
             .map((toy) => (
-              <div>
+              <div key={toy!.id}>
                 <div>{toy!.name}</div>
                 <Button
                   disabled={currentToys.includes(toy!.id)}
@@ -350,5 +399,39 @@ function ChooseToy({
         </SheetContent>
       </Sheet>
     </>
+  );
+}
+
+function ChooseToyButton({
+  currentToy,
+  style,
+  height,
+  ...props
+}: {
+  currentToy: number | null;
+  style: { bottom: number; left: number };
+  height: number;
+} & DialogTriggerProps &
+  React.RefAttributes<HTMLButtonElement>) {
+  if (currentToy === null) {
+    return (
+      <Button
+        {...props}
+        className={`absolute z-20 h-8 w-8 rounded-full`}
+        style={style}
+      >
+        +
+      </Button>
+    );
+  }
+  const toy = CAT_TOYS[currentToy]!;
+  return (
+    // @ts-expect-error trust me (button props on img element still sort of works)
+    <img
+      src={toy.image}
+      className="absolute -translate-x-1/2 transform"
+      style={{ left: style.left, bottom: 0, height: height * toy.height }}
+      {...props}
+    />
   );
 }
