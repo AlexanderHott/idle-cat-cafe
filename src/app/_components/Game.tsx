@@ -1,6 +1,6 @@
 "use client";
 
-import { forwardRef } from "react";
+import { LegacyRef, Ref, forwardRef } from "react";
 import {
   Sheet,
   SheetContent,
@@ -442,13 +442,13 @@ function ChooseToy({
 
 //
 const ChooseToyButton = forwardRef<
-  HTMLButtonElement,
+  HTMLElement,
   {
     currentToy: number | null;
     style: { bottom: number; left: number };
     height: number;
   } & DialogTriggerProps &
-    React.RefAttributes<HTMLButtonElement | HTMLImageElement>
+    React.RefAttributes<HTMLElement>
 >(function ChooseToyButton(
   {
     currentToy,
@@ -460,14 +460,14 @@ const ChooseToyButton = forwardRef<
     style: { bottom: number; left: number };
     height: number;
   } & DialogTriggerProps &
-    React.RefAttributes<HTMLButtonElement | HTMLImageElement>,
+    React.RefAttributes<HTMLElement>,
   ref,
 ) {
   if (currentToy === null) {
     return (
       <Button
         {...props}
-        ref={ref}
+        ref={ref as Ref<HTMLButtonElement>}
         className={`absolute z-20 h-8 w-8 rounded-full`}
         style={style}
       >
@@ -477,12 +477,13 @@ const ChooseToyButton = forwardRef<
   }
   const toy = CAT_TOYS[currentToy]!;
   return (
+    // @ts-expect-error bad img props
     <img
       src={toy.image}
       className="absolute -translate-x-1/2 transform"
       style={{ left: style.left, bottom: 0, height: height * toy.height }}
       {...props}
-      ref={ref}
+      ref={ref as LegacyRef<HTMLImageElement>}
     />
   );
 });
