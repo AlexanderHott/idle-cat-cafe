@@ -39,6 +39,7 @@ export const CAT_TOYS = "catToys";
 export const LAST_CAT_SPAWN = "lastCatSpawn";
 export const CURRENT_CATS = "currentCats";
 export const CURRENT_TOYS = "currentToys";
+export const SEEN_CATS = "seenCats";
 
 function generatePersistantAtom<T>(localStorageKey: string, defaultValue: T) {
   const uncheckedGet = () => {
@@ -121,7 +122,7 @@ export const {
 } = generatePersistantAtom<number[]>(MENU_ITEMS, []);
 
 export const {
-  atom: birastasAtom,
+  atom: baristasAtom,
   get: uncheckedGetBaristas,
   set: uncheckedSetBaristas,
 } = generatePersistantAtom<number[]>(BARISTAS, []);
@@ -137,13 +138,8 @@ export const {
   null,
 ]);
 
-// export const {
-//   atom: currentToysAtom,
-//   get: uncheckedGetCurrentToys,
-//   set: uncheckedSetCurrentToys,
-// } = generatePersistantAtom<(number | null)[]>(CURRENT_TOYS, [
-//   null,
-//   null,
-//   null,
-//   null,
-// ]);
+export const {
+  atom: seenCatsAtom,
+  get: uncheckedGetSeenCats,
+  set: uncheckedSetSeenCats,
+} = generatePersistantAtom<number[]>(SEEN_CATS, []);

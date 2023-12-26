@@ -13,7 +13,7 @@ import {
   DialogTrigger,
 } from "~/components/ui/dialog";
 import {
-  birastasAtom,
+  baristasAtom,
   currentCatsAtom,
   menuItemsAtom,
   moneyAtom,
@@ -30,7 +30,7 @@ export function WelcomeBackModal({
   const [money] = useAtom(moneyAtom);
 
   const [menuItems] = useAtom(menuItemsAtom);
-  const [baristas] = useAtom(birastasAtom);
+  const [baristas] = useAtom(baristasAtom);
   const [cats] = useAtom(currentCatsAtom);
 
   const profit = calculateProfit(

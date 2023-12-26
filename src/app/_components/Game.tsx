@@ -1,5 +1,6 @@
 "use client";
 
+import { forwardRef } from "react";
 import {
   Sheet,
   SheetContent,
@@ -10,10 +11,9 @@ import {
 } from "~/components/ui/sheet";
 import { useEffect, useRef, useState } from "react";
 import { WelcomeBackModal } from "./WelcomeBackModal";
-import { atom, useAtom } from "jotai";
+import { useAtom } from "jotai";
 import { CAT_TOYS, Shop } from "./Shop";
 import Image from "next/image";
-import { Cat } from "lucide-react";
 import { Button } from "~/components/ui/button";
 import { calculateProfit } from "~/lib/progression";
 import {
@@ -24,6 +24,7 @@ import {
 } from "~/lib/spawning";
 
 import {
+  baristasAtom as baristasAtom,
   catToyAtom,
   currentCatsAtom,
   currentToysAtom,
@@ -38,24 +39,28 @@ import {
   uncheckedGetLastCatSpawn,
   uncheckedGetMenuItems,
   uncheckedGetMoney,
+  uncheckedGetSeenCats,
   uncheckedSetCurrentCats,
   uncheckedSetDiff,
   uncheckedSetLastActive,
   uncheckedSetLastCatSpawn,
   uncheckedSetLastLogin,
   uncheckedSetMoney,
+  uncheckedSetSeenCats,
 } from "~/lib/gameState";
-import { DialogTriggerProps } from "@radix-ui/react-dialog";
+import { type DialogTriggerProps } from "@radix-ui/react-dialog";
+import { HelpInfo } from "./HelpInfo";
+import { SeenCats } from "./SeenCats";
 
 type Rarity = "COMMON" | "RARE";
-type Cat = {
+export type CatT = {
   id: number;
   name: string;
   desc: string;
   assetPath: string;
   rarity: Rarity;
 };
-const RARE_CATS: Cat[] = [
+const RARE_CATS: CatT[] = [
   {
     id: 0,
     name: "Murchyk",
@@ -65,30 +70,30 @@ const RARE_CATS: Cat[] = [
   },
   {
     id: 1,
-    name: "Murchyk 2",
-    desc: "Loves playing with plastic bags",
-    assetPath: "/assets/cats/murchyk/",
+    name: "Socrates",
+    desc: "Uncovering the secrets of the universe",
+    assetPath: "/assets/cats/socrates/",
     rarity: "RARE",
   },
   {
     id: 2,
-    name: "Murchyk 3",
-    desc: "Loves playing with plastic bags",
-    assetPath: "/assets/cats/murchyk/",
+    name: "Jack",
+    desc: "",
+    assetPath: "/assets/cats/jack/",
     rarity: "RARE",
   },
   {
     id: 3,
-    name: "Murchyk 4",
-    desc: "Loves playing with plastic bags",
-    assetPath: "/assets/cats/murchyk/",
+    name: "Pepsi",
+    desc: "",
+    assetPath: "/assets/cats/pepsi/",
     rarity: "RARE",
   },
 ];
 
-const COMMON_CATS: Cat[] = [];
+const COMMON_CATS: CatT[] = [];
 
-const CATS = RARE_CATS.concat(COMMON_CATS);
+export const CATS = RARE_CATS.concat(COMMON_CATS);
 
 // Check if we're running in the browser.
 if (typeof window !== "undefined") {
@@ -105,10 +110,12 @@ if (typeof window !== "undefined") {
   // Cat spawning
   const catToysOwned = uncheckedGetCatToys().length;
   const lastCatSpawn = uncheckedGetLastCatSpawn();
-
   let catPositions = uncheckedGetCurrentCats();
   const currentCats = catPositions.filter((c) => c !== null) as number[];
-  if (lastCatSpawn == 0 || diff > 60 * 60 * 6) {
+
+  const spawnedBefore = lastCatSpawn !== 0;
+  const shouldRespawn = diff > 60 * 60 * 6;
+  if (!spawnedBefore || shouldRespawn) {
     catPositions = pickRandomItems(
       CATS, // TODO: COMMON_CATS
       [], // TODO: RARE_CATS
@@ -125,6 +132,11 @@ if (typeof window !== "undefined") {
     console.log("set cc", catPlacements);
     uncheckedSetLastCatSpawn(now);
     console.log("[respawn] Cat placements", catPlacements);
+    const seenCats = new Set(uncheckedGetSeenCats());
+    catPlacements.filter((c) => c !== null).forEach((c) => seenCats.add(c!));
+    console.log("Setting seen cats", seenCats, Array.from(seenCats));
+    uncheckedSetSeenCats(Array.from(seenCats));
+    console.log("ucg sc", uncheckedGetSeenCats());
   } else {
     console.log("[old spawn] cat placements", catPositions);
   }
@@ -148,12 +160,11 @@ if (typeof window !== "undefined") {
 }
 
 export default function Game() {
-  const [money, setMoney] = useAtom(moneyAtom);
-  const [lastActive, setLastActive] = useAtom(lastActiveAtom);
+  const [money] = useAtom(moneyAtom);
+  const [, setLastActive] = useAtom(lastActiveAtom);
   const [diff] = useAtom(diffAtom);
-  const [currentCats] = useAtom(currentCatsAtom);
   const showWelcomeBackModal = diff > 60;
-  const [currentToys, setCurrentToys] = useAtom(currentToysAtom);
+  const [baristas] = useAtom(baristasAtom);
 
   ///
   /// Object positioning
@@ -198,22 +209,26 @@ export default function Game() {
     return () => clearInterval(interval);
   }, []);
 
-  const TOY_BUTTON_1 = {
+  ///
+  /// Cat Placement
+  ///
+  const CAT_PLACEMENT_1 = {
     bottom: height * 0.1,
     left: width * 0.42,
   };
-  const TOY_BUTTON_2 = {
+  const CAT_PLACEMENT_2 = {
     bottom: height * 0.1,
     left: (width * 2) / 3,
   };
-  const TOY_BUTTON_3 = {
+  const CAT_PLACEMENT_3 = {
     bottom: height * 0.1,
     left: width * 0.81,
   };
 
   ///
-  /// Cat Placement
+  /// Barista
   ///
+  const showBarista = baristas.length > 0;
 
   return (
     <>
@@ -230,24 +245,28 @@ export default function Game() {
         onLoad={() => setLoaded(true)}
       />
       {/* TODO: Fix gif transparency */}
-      <div
-        className="absolute z-20 bg-cyan-500"
-        style={{
-          width: width * 0.05,
-          height: width * 0.05,
-          top: height * 0.51,
-          left: width * 0.16,
-        }}
-      />
-      <img
-        src="/assets/baristas/axel-o/0.gif"
-        className="absolute z-30"
-        style={{
-          left: width * 0.12,
-          top: height * 0.2731,
-          height: height * 0.4,
-        }}
-      />
+      {showBarista && (
+        <div
+          className="absolute z-20 bg-cyan-500"
+          style={{
+            width: width * 0.05,
+            height: width * 0.05,
+            top: height * 0.51,
+            left: width * 0.16,
+          }}
+        />
+      )}
+      {showBarista && (
+        <img
+          src="/assets/baristas/axel-o/0.gif"
+          className="absolute z-30"
+          style={{
+            left: width * 0.12,
+            top: height * 0.2731,
+            height: height * 0.4,
+          }}
+        />
+      )}
       {/*<img
         src="/assets/cats/murchyk/frog-bed.webp"
         alt="cat1"
@@ -255,23 +274,24 @@ export default function Game() {
         className="absolute"
         style={cat1Pos}
       />*/}
-      <div className="fixed right-2 top-2 flex flex-col items-end gap-2 p-2">
-        <div className="flex items-center gap-2 rounded bg-black p-2">
-          <Image width={20} height={20} alt="$" src="/assets/coin.png" />
-          <span className="text-white">{money}</span>
+      <div className="fixed bottom-2 right-2 top-2 flex flex-col items-end justify-between gap-2 p-2">
+        <div className="flex flex-col items-end gap-2">
+          <div className="flex items-center gap-2 rounded bg-primary p-2">
+            <Image width={20} height={20} alt="$" src="/assets/coin.png" />
+            <span className="text-white">{Math.round(money)}</span>
+          </div>
+          <Shop />
+          <SeenCats />
         </div>
-        <Shop />
-        <Button size="icon">
-          <Cat />
-        </Button>
+        <HelpInfo />
       </div>
       {/* Add cat toy buttons */}
       {/*<ChooseToy style={TOY_BUTTON_1} index={1} height={height} />*/}
       {/*<ChooseToy style={TOY_BUTTON_2} index={2} height={height} />*/}
       {/*<ChooseToy style={TOY_BUTTON_3} index={3} height={height} />*/}
-      <CatToySlot style={TOY_BUTTON_1} index={1} height={height} />
-      <CatToySlot style={TOY_BUTTON_2} index={2} height={height} />
-      <CatToySlot style={TOY_BUTTON_3} index={3} height={height} />
+      <CatToySlot style={CAT_PLACEMENT_1} index={1} height={height} />
+      <CatToySlot style={CAT_PLACEMENT_2} index={2} height={height} />
+      <CatToySlot style={CAT_PLACEMENT_3} index={3} height={height} />
     </>
   );
 }
@@ -283,47 +303,65 @@ function CatToySlot({
 }: {
   height: number;
   index: number;
-  style: { bottom: number; left: number };
+  style: { bottom: number; left: number; height?: number };
 }) {
   const [currentToys] = useAtom(currentToysAtom);
   const [currentCats] = useAtom(currentCatsAtom);
-  // const firstCat = currentCats[0] ?? 0;
-  // const firstToyIdx = currentToys.filter((v) => v !== null)[0]!;
-  // const firstToy = CAT_TOYS[firstToyIdx]!;
   const hasCat = currentCats[index] !== null;
   const hasToy = currentToys[index] !== null;
-  console.log("slot", index, "hascat", hasCat, "hastoy", hasToy);
-  if (!hasCat) {
-    console.log("Slot", index, "no cat");
-    return <ChooseToy style={style} height={height} index={index} />;
-  }
-  console.log("debug", index, currentCats);
-  const catIdx = currentCats[index]!;
+  // console.log("slot", index, "hascat", hasCat, "hastoy", hasToy);
 
-  if (hasToy) {
-    const toy = CAT_TOYS[currentToys[index]!]!;
-    console.log("Slot", index, "hasToy", toy, catIdx, toy.cats[catIdx]);
+  const catIdx = currentCats[index]!;
+  if (!hasToy) {
+    // console.log("Slot", index, "no cat");
+    // console.log("debug", index, currentCats);
+    const cat = CATS[catIdx]!;
+    const flipped = Math.random() > 0.5;
+    return (
+      <>
+        {hasCat && (
+          <img
+            src={cat.assetPath + "default.gif"}
+            className={`absolute -translate-x-1/2 transform ${
+              flipped ? "-scale-x-100" : ""
+            }`}
+            style={{
+              left: style.left,
+              bottom: height * 0.354,
+              height: height * 0.25,
+            }}
+          />
+        )}
+        <ChooseToy style={style} height={height} index={index} />
+      </>
+    );
+  }
+
+  const toy = CAT_TOYS[currentToys[index]!]!;
+  if (hasCat) {
+    const asset = toy.cats[catIdx]!;
+    // console.log("Slot", index, "hasToy", toy, catIdx, toy.cats[catIdx]);
     return (
       <img
-        src={toy.cats[catIdx]}
+        src={asset.src}
         className="absolute -translate-x-1/2 transform"
         style={{
           left: style.left,
           bottom: 0,
-          height: height * toy.height,
+          height: height * asset.style.height,
         }}
       />
     );
   }
-  const cat = CATS[catIdx]!;
+
   return (
     <img
-      src={cat.assetPath + "default.gif"}
+      src={toy.image}
       className="absolute -translate-x-1/2 transform"
       style={{
         left: style.left,
         bottom: 0,
-        height: height * 0.1,
+        height: height * (style.height ?? 1),
       }}
     />
   );
@@ -402,21 +440,34 @@ function ChooseToy({
   );
 }
 
-function ChooseToyButton({
-  currentToy,
-  style,
-  height,
-  ...props
-}: {
-  currentToy: number | null;
-  style: { bottom: number; left: number };
-  height: number;
-} & DialogTriggerProps &
-  React.RefAttributes<HTMLButtonElement>) {
+//
+const ChooseToyButton = forwardRef<
+  HTMLButtonElement,
+  {
+    currentToy: number | null;
+    style: { bottom: number; left: number };
+    height: number;
+  } & DialogTriggerProps &
+    React.RefAttributes<HTMLButtonElement | HTMLImageElement>
+>(function ChooseToyButton(
+  {
+    currentToy,
+    style,
+    height,
+    ...props
+  }: {
+    currentToy: number | null;
+    style: { bottom: number; left: number };
+    height: number;
+  } & DialogTriggerProps &
+    React.RefAttributes<HTMLButtonElement | HTMLImageElement>,
+  ref,
+) {
   if (currentToy === null) {
     return (
       <Button
         {...props}
+        ref={ref}
         className={`absolute z-20 h-8 w-8 rounded-full`}
         style={style}
       >
@@ -432,6 +483,7 @@ function ChooseToyButton({
       className="absolute -translate-x-1/2 transform"
       style={{ left: style.left, bottom: 0, height: height * toy.height }}
       {...props}
+      ref={ref}
     />
   );
-}
+});
