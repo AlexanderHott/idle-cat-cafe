@@ -291,7 +291,7 @@ export function HireShop() {
   );
 }
 
-function Barista({ id, name, desc, price, image }: CatToyT) {
+function Barista({ id, name, desc, price, image }: BaristaT) {
   const [birastas, setBirastas] = useAtom(birastasAtom);
   const [money, setMoney] = useAtom(moneyAtom);
   const hired = birastas.includes(id);
@@ -328,7 +328,7 @@ export function MenuShop() {
   );
 }
 
-function MenuItem({ id, name, desc, price, image }: CatToyT) {
+function MenuItem({ id, name, desc, price, image }: MenuItemT) {
   const [menuItems, setMenuItems] = useAtom(menuItemsAtom);
   const [money, setMoney] = useAtom(moneyAtom);
   const owned = menuItems.includes(id);
