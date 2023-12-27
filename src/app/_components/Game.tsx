@@ -1,6 +1,6 @@
 "use client";
 
-import { LegacyRef, Ref, forwardRef } from "react";
+import { type LegacyRef, type Ref, forwardRef } from "react";
 import {
   Sheet,
   SheetContent,
@@ -212,6 +212,7 @@ export default function Game() {
   ///
   /// Cat Placement
   ///
+
   const CAT_PLACEMENT_1 = {
     bottom: height * 0.1,
     left: width * 0.42,
@@ -228,6 +229,7 @@ export default function Game() {
   ///
   /// Barista
   ///
+
   const showBarista = baristas.length > 0;
 
   return (
@@ -274,9 +276,9 @@ export default function Game() {
         className="absolute"
         style={cat1Pos}
       />*/}
-      <div className="fixed bottom-2 right-2 top-2 flex flex-col items-end justify-between gap-2 p-2">
+      <div className="fixed bottom-2 right-2 top-2 z-40 flex flex-col items-end justify-between gap-2 p-2">
         <div className="flex flex-col items-end gap-2">
-          <div className="flex items-center gap-2 rounded bg-primary p-2">
+          <div className="flex items-center gap-2 rounded bg-amber-50 text-amber-900 dark:bg-amber-900 dark:text-amber-50 p-2">
             <Image width={20} height={20} alt="$" src="/assets/coin.png" />
             <span className="text-white">{Math.round(money)}</span>
           </div>
@@ -322,7 +324,7 @@ function CatToySlot({
         {hasCat && (
           <img
             src={cat.assetPath + "default.gif"}
-            className={`absolute -translate-x-1/2 transform ${
+            className={`absolute -tranamber-x-1/2 transform ${
               flipped ? "-scale-x-100" : ""
             }`}
             style={{
@@ -344,7 +346,7 @@ function CatToySlot({
     return (
       <img
         src={asset.src}
-        className="absolute -translate-x-1/2 transform"
+        className="absolute -tranamber-x-1/2 transform"
         style={{
           left: style.left,
           bottom: 0,
@@ -357,7 +359,7 @@ function CatToySlot({
   return (
     <img
       src={toy.image}
-      className="absolute -translate-x-1/2 transform"
+      className="absolute -tranamber-x-1/2 transform"
       style={{
         left: style.left,
         bottom: 0,
@@ -384,7 +386,7 @@ function ChooseToy({
     <>
       {unequpiedToys && currentToys[index] === null && (
         <div
-          className="absolute z-10 h-8 w-8 animate-ping rounded-full bg-slate-900"
+          className="absolute z-10 h-8 w-8 animate-ping rounded-full bg-amber-900"
           style={style}
         />
       )}
@@ -480,7 +482,7 @@ const ChooseToyButton = forwardRef<
     // @ts-expect-error bad img props
     <img
       src={toy.image}
-      className="absolute -translate-x-1/2 transform"
+      className="absolute -tranamber-x-1/2 transform"
       style={{ left: style.left, bottom: 0, height: height * toy.height }}
       {...props}
       ref={ref as LegacyRef<HTMLImageElement>}

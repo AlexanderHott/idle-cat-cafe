@@ -51,7 +51,7 @@ export function SeenCats() {
 }
 function CatCard({ name, desc, assetPath, seen }: CatT & { seen: boolean }) {
   return (
-    <Card className="bg-pink-100">
+    <Card>
       <CardHeader className="">
         <CardTitle className="text-lg">{seen ? name : "???"}</CardTitle>
         <CardDescription>{seen ? desc : "???"}</CardDescription>

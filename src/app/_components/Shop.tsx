@@ -259,10 +259,32 @@ const MENU_ITEMS: MenuItemT[] = [
 ];
 
 export function Shop() {
+  const [hiredBaristas] = useAtom(baristasAtom);
+  const [toys] = useAtom(catToyAtom);
+  const [menuItems] = useAtom(menuItemsAtom);
+  const [money] = useAtom(moneyAtom);
+  const cheapestBarista =
+    BARISTAS.filter((b) => !hiredBaristas.includes(b.id)).sort(
+      (a, b) => a.price - b.price,
+    )[0]?.price ?? Infinity;
+  const cheapestToy =
+    CAT_TOYS.filter((t) => !toys.includes(t.id)).sort(
+      (a, b) => a.price - b.price,
+    )[0]?.price ?? Infinity;
+  const cheapestMenuItem =
+    MENU_ITEMS.filter((m) => !menuItems.includes(m.id)).sort(
+      (a, b) => a.price - b.price,
+    )[0]?.price ?? Infinity;
+
+    const canAffordBarista = money >= cheapestBarista 
+    const canAffordToy = money >= cheapestToy 
+    const canAffordMenuItem = money >= cheapestMenuItem 
+    const canAffordNewItem = canAffordBarista || canAffordToy || canAffordMenuItem
+
   return (
     <Sheet>
       <SheetTrigger asChild>
-        <Button size="icon">
+        <Button size="icon" notification={canAffordNewItem}>
           <ShoppingCart />
         </Button>
       </SheetTrigger>
@@ -325,7 +347,7 @@ function CatToy({ id, name, desc, price, image }: CatToyT) {
     }
   }
   return (
-    <Card className="bg-pink-50">
+    <Card>
       <CardHeader className="flex flex-row justify-between">
         <div>
           <CardTitle className="text-lg">{name}</CardTitle>
@@ -370,7 +392,7 @@ function Barista({ id, name, desc, price, image }: BaristaT) {
     }
   }
   return (
-    <Card className="bg-pink-50">
+    <Card>
       <CardHeader className="flex flex-row justify-between">
         <div>
           <CardTitle className="text-lg">{name}</CardTitle>
@@ -415,7 +437,7 @@ function MenuItem({ id, name, desc, price, image }: MenuItemT) {
     }
   }
   return (
-    <Card className="bg-pink-50">
+    <Card>
       <CardHeader className="flex shrink flex-row justify-between">
         <div>
           <CardTitle className="text-lg">{name}</CardTitle>
