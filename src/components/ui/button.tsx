@@ -56,19 +56,19 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ) => {
     const Comp = asChild ? Slot : "button";
     return (
-      <div className="relative">
-        {notification && (
-          <span className="absolute right-0 top-0 flex h-3 w-3 -translate-y-1/2 translate-x-1/2 transform">
-            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-amber-400 opacity-75"></span>
-            <span className="relative inline-flex h-3 w-3 rounded-full bg-amber-500"></span>
-          </span>
-        )}
-        <Comp
-          className={cn(buttonVariants({ variant, size, className }))}
-          ref={ref}
-          {...props}
-        />
-      </div>
+      // <>
+      //   {notification && (
+      //     <span className="relative right-0 top-0 flex h-3 w-3 -translate-y-1/2 translate-x-1/2 transform">
+      //       <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-amber-400 opacity-75"></span>
+      //       <span className="relative inline-flex h-3 w-3 rounded-full bg-amber-500"></span>
+      //     </span>
+      //   )}
+      <Comp
+        className={cn(buttonVariants({ variant, size, className }))}
+        ref={ref}
+        {...props}
+      />
+      // </>
     );
   },
 );

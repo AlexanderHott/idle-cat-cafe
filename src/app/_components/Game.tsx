@@ -1,6 +1,12 @@
 "use client";
 
-import { type LegacyRef, type Ref, forwardRef } from "react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "~/components/ui/card";
 import {
   Sheet,
   SheetContent,
@@ -9,10 +15,11 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "~/components/ui/sheet";
+import { ScrollArea } from "~/components/ui/scroll-area";
 import { useEffect, useRef, useState } from "react";
 import { WelcomeBackModal } from "./WelcomeBackModal";
 import { useAtom } from "jotai";
-import { CAT_TOYS, Shop } from "./Shop";
+import { CAT_TOYS, type CatToyT, Shop } from "./Shop";
 import Image from "next/image";
 import { Button } from "~/components/ui/button";
 import { calculateProfit } from "~/lib/progression";
@@ -48,7 +55,6 @@ import {
   uncheckedSetMoney,
   uncheckedSetSeenCats,
 } from "~/lib/gameState";
-import { type DialogTriggerProps } from "@radix-ui/react-dialog";
 import { HelpInfo } from "./HelpInfo";
 import { SeenCats } from "./SeenCats";
 
@@ -264,7 +270,7 @@ export default function Game() {
           className="absolute z-30"
           style={{
             left: width * 0.12,
-            top: height * 0.2731,
+            bottom: height * 0.327,
             height: height * 0.4,
           }}
         />
@@ -278,7 +284,7 @@ export default function Game() {
       />*/}
       <div className="fixed bottom-2 right-2 top-2 z-40 flex flex-col items-end justify-between gap-2 p-2">
         <div className="flex flex-col items-end gap-2">
-          <div className="flex items-center gap-2 rounded bg-amber-50 text-amber-900 dark:bg-amber-900 dark:text-amber-50 p-2">
+          <div className="flex items-center gap-2 rounded bg-amber-50 p-2 text-amber-900 dark:bg-amber-900 dark:text-amber-50">
             <Image width={20} height={20} alt="$" src="/assets/coin.png" />
             <span className="text-white">{Math.round(money)}</span>
           </div>
@@ -311,20 +317,18 @@ function CatToySlot({
   const [currentCats] = useAtom(currentCatsAtom);
   const hasCat = currentCats[index] !== null;
   const hasToy = currentToys[index] !== null;
-  // console.log("slot", index, "hascat", hasCat, "hastoy", hasToy);
 
   const catIdx = currentCats[index]!;
+
+  const cat = CATS[catIdx]!;
+  const flipped = Math.random() > 0.5;
   if (!hasToy) {
-    // console.log("Slot", index, "no cat");
-    // console.log("debug", index, currentCats);
-    const cat = CATS[catIdx]!;
-    const flipped = Math.random() > 0.5;
     return (
       <>
         {hasCat && (
           <img
             src={cat.assetPath + "default.gif"}
-            className={`absolute -tranamber-x-1/2 transform ${
+            className={`absolute -translate-x-1/2 transform ${
               flipped ? "-scale-x-100" : ""
             }`}
             style={{
@@ -346,7 +350,7 @@ function CatToySlot({
     return (
       <img
         src={asset.src}
-        className="absolute -tranamber-x-1/2 transform"
+        className="absolute -translate-x-1/2 transform"
         style={{
           left: style.left,
           bottom: 0,
@@ -359,7 +363,7 @@ function CatToySlot({
   return (
     <img
       src={toy.image}
-      className="absolute -tranamber-x-1/2 transform"
+      className="absolute -translate-x-1/2 transform"
       style={{
         left: style.left,
         bottom: 0,
@@ -382,6 +386,7 @@ function ChooseToy({
   const [catToys] = useAtom(catToyAtom);
   const unequpiedToys =
     currentToys.filter((v) => v !== null).length < catToys.length;
+  const toyId = currentToys[index];
   return (
     <>
       {unequpiedToys && currentToys[index] === null && (
@@ -393,11 +398,24 @@ function ChooseToy({
 
       <Sheet>
         <SheetTrigger asChild>
-          <ChooseToyButton
-            style={style}
-            currentToy={currentToys[index]!}
-            height={height}
-          />
+          {toyId !== null ? (
+            <img
+              src={CAT_TOYS[toyId!]!.image}
+              className="absolute -translate-x-1/2 transform"
+              style={{
+                left: style.left,
+                bottom: 0,
+                height: height * CAT_TOYS[toyId!]!.height,
+              }}
+            />
+          ) : (
+            <Button
+              className={`absolute z-20 h-8 w-8 rounded-full`}
+              style={style}
+            >
+              +
+            </Button>
+          )}
         </SheetTrigger>
         <SheetContent className="flex grow-0 flex-col">
           <SheetHeader>
@@ -406,86 +424,65 @@ function ChooseToy({
               Put down a fun item for cats to attract more cats.
             </SheetDescription>
           </SheetHeader>
-          {catToys
-            .map((idx) => CAT_TOYS[idx])
-            .map((toy) => (
-              <div key={toy!.id}>
-                <div>{toy!.name}</div>
-                <Button
-                  disabled={currentToys.includes(toy!.id)}
-                  onClick={() =>
-                    setCurrentToys(
-                      currentToys.map((t, idx) =>
-                        idx === index ? toy!.id : t,
-                      ),
-                    )
-                  }
-                >
-                  Equip
-                </Button>
-              </div>
-            ))}
-          <Button
-            onClick={() =>
-              setCurrentToys(
-                currentToys.map((t, idx) => (idx === index ? null : t)),
-              )
-            }
-            variant={"destructive"}
-            disabled={currentToys[index] === null}
-          >
-            Clear
-          </Button>
+          <ScrollArea>
+            <div className="flex flex-col gap-2">
+              {catToys
+                .map((idx) => CAT_TOYS[idx]!)
+                .map((toy) => (
+                  <EquipCatToy key={toy.id} {...toy} index={index} />
+                ))}
+              <Button
+                onClick={() =>
+                  setCurrentToys(
+                    currentToys.map((t, idx) => (idx === index ? null : t)),
+                  )
+                }
+                variant={"destructive"}
+                disabled={currentToys[index] === null}
+                className="w-full"
+              >
+                Clear
+              </Button>
+            </div>
+          </ScrollArea>
         </SheetContent>
       </Sheet>
     </>
   );
 }
 
-//
-const ChooseToyButton = forwardRef<
-  HTMLElement,
-  {
-    currentToy: number | null;
-    style: { bottom: number; left: number };
-    height: number;
-  } & DialogTriggerProps &
-    React.RefAttributes<HTMLElement>
->(function ChooseToyButton(
-  {
-    currentToy,
-    style,
-    height,
-    ...props
-  }: {
-    currentToy: number | null;
-    style: { bottom: number; left: number };
-    height: number;
-  } & DialogTriggerProps &
-    React.RefAttributes<HTMLElement>,
-  ref,
-) {
-  if (currentToy === null) {
-    return (
-      <Button
-        {...props}
-        ref={ref as Ref<HTMLButtonElement>}
-        className={`absolute z-20 h-8 w-8 rounded-full`}
-        style={style}
-      >
-        +
-      </Button>
-    );
-  }
-  const toy = CAT_TOYS[currentToy]!;
+function EquipCatToy({
+  name,
+  desc,
+  image,
+  id,
+  index,
+}: CatToyT & { index: number }) {
+  const [currentToys, setCurrentToys] = useAtom(currentToysAtom);
+  const alreadyEquipped = currentToys.includes(id);
   return (
-    // @ts-expect-error bad img props
-    <img
-      src={toy.image}
-      className="absolute -tranamber-x-1/2 transform"
-      style={{ left: style.left, bottom: 0, height: height * toy.height }}
-      {...props}
-      ref={ref as LegacyRef<HTMLImageElement>}
-    />
+    <Card>
+      <CardHeader className="flex flex-row justify-between">
+        <div>
+          <CardTitle className="text-lg">{name}</CardTitle>
+          <CardDescription>{desc}</CardDescription>
+        </div>
+        <div>
+          <Image src={image} alt={name} width={48} height={48} />
+        </div>
+      </CardHeader>
+      <CardContent className="flex grow flex-row">
+        <Button
+          disabled={alreadyEquipped}
+          onClick={() =>
+            setCurrentToys(
+              currentToys.map((t, idx) => (idx === index ? id : t)),
+            )
+          }
+        >
+          {alreadyEquipped ? "Equiped " : "Equip"}
+        </Button>
+      </CardContent>
+    </Card>
   );
-});
+}

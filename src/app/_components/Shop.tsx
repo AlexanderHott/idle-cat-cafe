@@ -31,7 +31,7 @@ type Asset = {
   src: string;
   style: { height: number; left: number };
 };
-type CatToyT = {
+export type CatToyT = {
   id: number;
   name: string;
   desc: string;
@@ -276,10 +276,11 @@ export function Shop() {
       (a, b) => a.price - b.price,
     )[0]?.price ?? Infinity;
 
-    const canAffordBarista = money >= cheapestBarista 
-    const canAffordToy = money >= cheapestToy 
-    const canAffordMenuItem = money >= cheapestMenuItem 
-    const canAffordNewItem = canAffordBarista || canAffordToy || canAffordMenuItem
+  const canAffordBarista = money >= cheapestBarista;
+  const canAffordToy = money >= cheapestToy;
+  const canAffordMenuItem = money >= cheapestMenuItem;
+  const canAffordNewItem =
+    canAffordBarista || canAffordToy || canAffordMenuItem;
 
   return (
     <Sheet>
