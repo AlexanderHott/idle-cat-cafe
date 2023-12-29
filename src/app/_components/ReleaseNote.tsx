@@ -1,6 +1,6 @@
 "use client";
-import { version } from "package.json";
-import { Bug, ExternalLink, Github, Newspaper } from "lucide-react";
+import packageJson from "package.json";
+import { ExternalLink, Newspaper } from "lucide-react";
 import Link from "next/link";
 import { Button, ButtonWithNotification } from "~/components/ui/button";
 import {
@@ -13,11 +13,19 @@ import {
 } from "~/components/ui/sheet";
 import { Suspense, memo } from "react";
 import { ScrollArea } from "~/components/ui/scroll-area";
+import { useAtom } from "jotai";
+import { lastReleaseAtom } from "~/lib/gameState";
+
 export function ReleaseNotes() {
+  const [lastRelease] = useAtom(lastReleaseAtom);
+  const seenLatestPatchNotes = lastRelease === "v" + packageJson.version;
   return (
     <Sheet>
       <SheetTrigger asChild>
-        <ButtonWithNotification size={"icon"} notification={true}>
+        <ButtonWithNotification
+          size={"icon"}
+          notification={!seenLatestPatchNotes}
+        >
           <Newspaper />
         </ButtonWithNotification>
         {/*
@@ -29,11 +37,12 @@ export function ReleaseNotes() {
         <SheetHeader className="flex flex-col">
           <SheetTitle>Release Notes</SheetTitle>
           <SheetDescription className="text-lg">
-            See what's new!
+            See what's new! <span className="mx-2">•</span> v
+            {packageJson.version}
           </SheetDescription>
         </SheetHeader>
         <Suspense fallback={<GitHubReleaseNotesSkeleton />}>
-          <GitHubReleaseNotes />
+          <GitHubReleaseNotesFetcher />
         </Suspense>
         <div className="flex flex-wrap gap-2">
           <Link
@@ -58,12 +67,20 @@ type ReleaseNote = {
   id: string;
   created_at: string;
 };
-const GitHubReleaseNotes = memo(async function GitHubReleaseNotes() {
-  const res = await fetch(
-    "https://api.github.com/repos/AlexanderHOtt/idle-cat-cafe/releases",
-  );
-  const releaseNotes = (await res.json()) as ReleaseNote[];
+const GitHubReleaseNotesFetcher = memo(
+  async function GitHubReleaseNotesFetcher() {
+    const res = await fetch(
+      "https://api.github.com/repos/AlexanderHOtt/idle-cat-cafe/releases",
+    );
+    const releaseNotes = (await res.json()) as ReleaseNote[];
+    console.log("rn", releaseNotes);
+    return <GitHubReleaseNotes releaseNotes={releaseNotes} />;
+  },
+);
 
+function GitHubReleaseNotes({ releaseNotes }: { releaseNotes: ReleaseNote[] }) {
+  const [, setLastRelease] = useAtom(lastReleaseAtom);
+  setLastRelease(releaseNotes[0]!.name);
   return (
     <ScrollArea className="flex-grow">
       <div className="flex flex-col justify-start gap-4">
@@ -73,7 +90,7 @@ const GitHubReleaseNotes = memo(async function GitHubReleaseNotes() {
       </div>
     </ScrollArea>
   );
-});
+}
 
 function ReleaseNote({ id, name, body, html_url, created_at }: ReleaseNote) {
   const createdAtText = new Date(created_at).toLocaleDateString();
