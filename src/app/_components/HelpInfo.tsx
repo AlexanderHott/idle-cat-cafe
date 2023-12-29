@@ -28,7 +28,7 @@ export function HelpInfo() {
             attracting more cats. More cats show up when you have more toys.
           </SheetDescription>
         </SheetHeader>
-        <div className="flex gap-2">
+        <div className="flex gap-2 flex-wrap">
           <Link
             href="https://github.com/AlexanderHott/idle-cat-cafe/discussions"
             target="_blank"
