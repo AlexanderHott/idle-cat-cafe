@@ -66,6 +66,10 @@ export type CatT = {
   desc: string;
   assetPath: string;
   rarity: Rarity;
+  defaultStyle: {
+    bottom: number;
+    height: number;
+  };
 };
 const RARE_CATS: CatT[] = [
   {
@@ -74,6 +78,10 @@ const RARE_CATS: CatT[] = [
     desc: "Loves playing with plastic bags",
     assetPath: "/assets/cats/murchyk/",
     rarity: "RARE",
+    defaultStyle: {
+      bottom: 0.365,
+      height: 0.23,
+    },
   },
   {
     id: 1,
@@ -81,6 +89,10 @@ const RARE_CATS: CatT[] = [
     desc: "Uncovering the secrets of the universe",
     assetPath: "/assets/cats/socrates/",
     rarity: "RARE",
+    defaultStyle: {
+      bottom: 0.366,
+      height: 0.2,
+    },
   },
   {
     id: 2,
@@ -88,6 +100,10 @@ const RARE_CATS: CatT[] = [
     desc: "",
     assetPath: "/assets/cats/jack/",
     rarity: "RARE",
+    defaultStyle: {
+      bottom: 0.398,
+      height: 0.18,
+    },
   },
   {
     id: 3,
@@ -95,6 +111,10 @@ const RARE_CATS: CatT[] = [
     desc: "",
     assetPath: "/assets/cats/pepsi/",
     rarity: "RARE",
+    defaultStyle: {
+      bottom: 0.327,
+      height: 0.4,
+    },
   },
 ];
 
@@ -337,8 +357,8 @@ function CatToySlot({
             }`}
             style={{
               left: style.left,
-              bottom: height * 0.354,
-              height: height * 0.25,
+              bottom: height * cat.defaultStyle.bottom,
+              height: height * cat.defaultStyle.height,
             }}
           />
         )}
