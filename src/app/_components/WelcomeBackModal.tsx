@@ -44,11 +44,15 @@ export function WelcomeBackModal({
     <Dialog defaultOpen={defaultOpen}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Welcome Back!</DialogTitle>
+          <DialogTitle className="text-amber-900 dark:text-amber-50">
+            Welcome Back!
+          </DialogTitle>
           <DialogDescription asChild>
             <>
-              Look what you got while you were away!
-              <div className="pt-4">
+              <p className="dark:text-amber-40 text-amber-500">
+                Look what you got while you were away!
+              </p>
+              <div className="dark:text-amber-40 pt-4 text-amber-500 ">
                 <Image
                   src="/assets/coin.png"
                   className="mr-2 inline"

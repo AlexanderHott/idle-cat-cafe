@@ -28,7 +28,7 @@ export function SeenCats() {
   return (
     <Sheet>
       <SheetTrigger asChild>
-        <Button size="icon" className="mb-2">
+        <Button size="icon">
           <Cat />
         </Button>
       </SheetTrigger>

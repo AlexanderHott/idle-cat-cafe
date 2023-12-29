@@ -57,6 +57,7 @@ import {
 } from "~/lib/gameState";
 import { HelpInfo } from "./HelpInfo";
 import { SeenCats } from "./SeenCats";
+import { ReleaseNotes } from "./ReleaseNote";
 
 type Rarity = "COMMON" | "RARE";
 export type CatT = {
@@ -282,7 +283,7 @@ export default function Game() {
         className="absolute"
         style={cat1Pos}
       />*/}
-      <div className="fixed bottom-2 right-2 top-2 z-40 flex flex-col items-end justify-between gap-2 p-2">
+      <div className="fixed bottom-2 right-2 top-2 z-40 flex flex-col items-end justify-between gap-2">
         <div className="flex flex-col items-end gap-2">
           <div className="flex items-center gap-2 rounded bg-amber-50 p-2 text-amber-900 dark:bg-amber-900 dark:text-amber-50">
             <Image width={20} height={20} alt="$" src="/assets/coin.png" />
@@ -291,7 +292,10 @@ export default function Game() {
           <Shop />
           <SeenCats />
         </div>
-        <HelpInfo />
+        <div className="flex flex-col items-end gap-2">
+          <ReleaseNotes />
+          <HelpInfo />
+        </div>
       </div>
       {/* Add cat toy buttons */}
       {/*<ChooseToy style={TOY_BUTTON_1} index={1} height={height} />*/}

@@ -39,21 +39,10 @@ export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement>,
     VariantProps<typeof buttonVariants> {
   asChild?: boolean;
-  notification?: boolean;
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  (
-    {
-      className,
-      variant,
-      size,
-      asChild = false,
-      notification = false,
-      ...props
-    },
-    ref,
-  ) => {
+  ({ className, variant, size, asChild = false, ...props }, ref) => {
     const Comp = asChild ? Slot : "button";
     return (
       // <>
@@ -73,5 +62,31 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   },
 );
 Button.displayName = "Button";
+
+type ButtonWithNotificationProps = ButtonProps & {
+  notification?: boolean;
+  containerCn?: string;
+};
+
+export const ButtonWithNotification = React.forwardRef<
+  HTMLButtonElement,
+  ButtonWithNotificationProps
+>(function ButtonWithNotification(
+  { notification, containerCn, ...buttonProps }: ButtonWithNotificationProps,
+  ref,
+) {
+  if (!notification) {
+    return <Button {...buttonProps} ref={ref} />;
+  }
+  return (
+    <div className={cn("relative", containerCn)}>
+      <span className="absolute right-0 top-0 flex h-3 w-3 -translate-y-1/2 translate-x-1/2 transform">
+        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-amber-400 opacity-75"></span>
+        <span className="relative inline-flex h-3 w-3 rounded-full bg-amber-500"></span>
+      </span>
+      <Button {...buttonProps} ref={ref} />
+    </div>
+  );
+});
 
 export { Button, buttonVariants };
