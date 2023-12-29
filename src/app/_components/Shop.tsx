@@ -1,5 +1,5 @@
 "use client";
-import { Button } from "~/components/ui/button";
+import { Button, ButtonWithNotification } from "~/components/ui/button";
 import Image from "next/image";
 import { ShoppingCart } from "lucide-react";
 import {
@@ -285,9 +285,9 @@ export function Shop() {
   return (
     <Sheet>
       <SheetTrigger asChild>
-        <Button size="icon" notification={canAffordNewItem}>
+        <ButtonWithNotification size="icon" notification={canAffordNewItem}>
           <ShoppingCart />
-        </Button>
+        </ButtonWithNotification>
       </SheetTrigger>
       <SheetContent className="flex grow-0 flex-col">
         <SheetHeader>
