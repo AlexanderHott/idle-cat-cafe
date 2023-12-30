@@ -8,7 +8,7 @@ body:
     attributes:
       label: "Game State"
       description: Go to https://idle-cat-cafe.vercel.app/debug and click the "Copy JSON" button at the bottom
-      placeholder: []
+      placeholder: "[]"
     validations:
       required: true
   - type: textarea
