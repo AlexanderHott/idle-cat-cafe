@@ -1,6 +1,12 @@
 "use client";
 
-import { LegacyRef, Ref, forwardRef } from "react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "~/components/ui/card";
 import {
   Sheet,
   SheetContent,
@@ -9,10 +15,11 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "~/components/ui/sheet";
+import { ScrollArea } from "~/components/ui/scroll-area";
 import { useEffect, useRef, useState } from "react";
 import { WelcomeBackModal } from "./WelcomeBackModal";
 import { useAtom } from "jotai";
-import { CAT_TOYS, Shop } from "./Shop";
+import { CAT_TOYS, type CatToyT, Shop } from "./Shop";
 import Image from "next/image";
 import { Button } from "~/components/ui/button";
 import { calculateProfit } from "~/lib/progression";
@@ -48,9 +55,9 @@ import {
   uncheckedSetMoney,
   uncheckedSetSeenCats,
 } from "~/lib/gameState";
-import { type DialogTriggerProps } from "@radix-ui/react-dialog";
 import { HelpInfo } from "./HelpInfo";
 import { SeenCats } from "./SeenCats";
+import { ReleaseNotes } from "./ReleaseNote";
 
 type Rarity = "COMMON" | "RARE";
 export type CatT = {
@@ -59,6 +66,10 @@ export type CatT = {
   desc: string;
   assetPath: string;
   rarity: Rarity;
+  defaultStyle: {
+    bottom: number;
+    height: number;
+  };
 };
 const RARE_CATS: CatT[] = [
   {
@@ -67,6 +78,10 @@ const RARE_CATS: CatT[] = [
     desc: "Loves playing with plastic bags",
     assetPath: "/assets/cats/murchyk/",
     rarity: "RARE",
+    defaultStyle: {
+      bottom: 0.365,
+      height: 0.23,
+    },
   },
   {
     id: 1,
@@ -74,6 +89,10 @@ const RARE_CATS: CatT[] = [
     desc: "Uncovering the secrets of the universe",
     assetPath: "/assets/cats/socrates/",
     rarity: "RARE",
+    defaultStyle: {
+      bottom: 0.366,
+      height: 0.2,
+    },
   },
   {
     id: 2,
@@ -81,6 +100,10 @@ const RARE_CATS: CatT[] = [
     desc: "",
     assetPath: "/assets/cats/jack/",
     rarity: "RARE",
+    defaultStyle: {
+      bottom: 0.398,
+      height: 0.18,
+    },
   },
   {
     id: 3,
@@ -88,6 +111,10 @@ const RARE_CATS: CatT[] = [
     desc: "",
     assetPath: "/assets/cats/pepsi/",
     rarity: "RARE",
+    defaultStyle: {
+      bottom: 0.327,
+      height: 0.4,
+    },
   },
 ];
 
@@ -212,6 +239,7 @@ export default function Game() {
   ///
   /// Cat Placement
   ///
+
   const CAT_PLACEMENT_1 = {
     bottom: height * 0.1,
     left: width * 0.42,
@@ -228,6 +256,7 @@ export default function Game() {
   ///
   /// Barista
   ///
+
   const showBarista = baristas.length > 0;
 
   return (
@@ -262,7 +291,7 @@ export default function Game() {
           className="absolute z-30"
           style={{
             left: width * 0.12,
-            top: height * 0.2731,
+            bottom: height * 0.327,
             height: height * 0.4,
           }}
         />
@@ -274,16 +303,19 @@ export default function Game() {
         className="absolute"
         style={cat1Pos}
       />*/}
-      <div className="fixed bottom-2 right-2 top-2 flex flex-col items-end justify-between gap-2 p-2">
+      <div className="fixed bottom-2 right-2 top-2 z-40 flex flex-col items-end justify-between gap-2">
         <div className="flex flex-col items-end gap-2">
-          <div className="flex items-center gap-2 rounded bg-primary p-2">
+          <div className="flex items-center gap-2 rounded bg-amber-50 p-2 text-amber-900 dark:bg-amber-900 dark:text-amber-50">
             <Image width={20} height={20} alt="$" src="/assets/coin.png" />
             <span className="text-white">{Math.round(money)}</span>
           </div>
           <Shop />
           <SeenCats />
         </div>
-        <HelpInfo />
+        <div className="flex flex-col items-end gap-2">
+          <ReleaseNotes />
+          <HelpInfo />
+        </div>
       </div>
       {/* Add cat toy buttons */}
       {/*<ChooseToy style={TOY_BUTTON_1} index={1} height={height} />*/}
@@ -309,14 +341,12 @@ function CatToySlot({
   const [currentCats] = useAtom(currentCatsAtom);
   const hasCat = currentCats[index] !== null;
   const hasToy = currentToys[index] !== null;
-  // console.log("slot", index, "hascat", hasCat, "hastoy", hasToy);
 
   const catIdx = currentCats[index]!;
+
+  const cat = CATS[catIdx]!;
+  const flipped = Math.random() > 0.5;
   if (!hasToy) {
-    // console.log("Slot", index, "no cat");
-    // console.log("debug", index, currentCats);
-    const cat = CATS[catIdx]!;
-    const flipped = Math.random() > 0.5;
     return (
       <>
         {hasCat && (
@@ -327,8 +357,8 @@ function CatToySlot({
             }`}
             style={{
               left: style.left,
-              bottom: height * 0.354,
-              height: height * 0.25,
+              bottom: height * cat.defaultStyle.bottom,
+              height: height * cat.defaultStyle.height,
             }}
           />
         )}
@@ -380,22 +410,36 @@ function ChooseToy({
   const [catToys] = useAtom(catToyAtom);
   const unequpiedToys =
     currentToys.filter((v) => v !== null).length < catToys.length;
+  const toyId = currentToys[index];
   return (
     <>
       {unequpiedToys && currentToys[index] === null && (
         <div
-          className="absolute z-10 h-8 w-8 animate-ping rounded-full bg-slate-900"
+          className="absolute z-10 h-8 w-8 animate-ping rounded-full bg-amber-900"
           style={style}
         />
       )}
 
       <Sheet>
         <SheetTrigger asChild>
-          <ChooseToyButton
-            style={style}
-            currentToy={currentToys[index]!}
-            height={height}
-          />
+          {toyId !== null ? (
+            <img
+              src={CAT_TOYS[toyId!]!.image}
+              className="absolute -translate-x-1/2 transform"
+              style={{
+                left: style.left,
+                bottom: 0,
+                height: height * CAT_TOYS[toyId!]!.height,
+              }}
+            />
+          ) : (
+            <Button
+              className={`absolute z-20 h-8 w-8 rounded-full`}
+              style={style}
+            >
+              +
+            </Button>
+          )}
         </SheetTrigger>
         <SheetContent className="flex grow-0 flex-col">
           <SheetHeader>
@@ -404,86 +448,65 @@ function ChooseToy({
               Put down a fun item for cats to attract more cats.
             </SheetDescription>
           </SheetHeader>
-          {catToys
-            .map((idx) => CAT_TOYS[idx])
-            .map((toy) => (
-              <div key={toy!.id}>
-                <div>{toy!.name}</div>
-                <Button
-                  disabled={currentToys.includes(toy!.id)}
-                  onClick={() =>
-                    setCurrentToys(
-                      currentToys.map((t, idx) =>
-                        idx === index ? toy!.id : t,
-                      ),
-                    )
-                  }
-                >
-                  Equip
-                </Button>
-              </div>
-            ))}
-          <Button
-            onClick={() =>
-              setCurrentToys(
-                currentToys.map((t, idx) => (idx === index ? null : t)),
-              )
-            }
-            variant={"destructive"}
-            disabled={currentToys[index] === null}
-          >
-            Clear
-          </Button>
+          <ScrollArea>
+            <div className="flex flex-col gap-2">
+              {catToys
+                .map((idx) => CAT_TOYS[idx]!)
+                .map((toy) => (
+                  <EquipCatToy key={toy.id} {...toy} index={index} />
+                ))}
+              <Button
+                onClick={() =>
+                  setCurrentToys(
+                    currentToys.map((t, idx) => (idx === index ? null : t)),
+                  )
+                }
+                variant={"destructive"}
+                disabled={currentToys[index] === null}
+                className="w-full"
+              >
+                Clear
+              </Button>
+            </div>
+          </ScrollArea>
         </SheetContent>
       </Sheet>
     </>
   );
 }
 
-//
-const ChooseToyButton = forwardRef<
-  HTMLElement,
-  {
-    currentToy: number | null;
-    style: { bottom: number; left: number };
-    height: number;
-  } & DialogTriggerProps &
-    React.RefAttributes<HTMLElement>
->(function ChooseToyButton(
-  {
-    currentToy,
-    style,
-    height,
-    ...props
-  }: {
-    currentToy: number | null;
-    style: { bottom: number; left: number };
-    height: number;
-  } & DialogTriggerProps &
-    React.RefAttributes<HTMLElement>,
-  ref,
-) {
-  if (currentToy === null) {
-    return (
-      <Button
-        {...props}
-        ref={ref as Ref<HTMLButtonElement>}
-        className={`absolute z-20 h-8 w-8 rounded-full`}
-        style={style}
-      >
-        +
-      </Button>
-    );
-  }
-  const toy = CAT_TOYS[currentToy]!;
+function EquipCatToy({
+  name,
+  desc,
+  image,
+  id,
+  index,
+}: CatToyT & { index: number }) {
+  const [currentToys, setCurrentToys] = useAtom(currentToysAtom);
+  const alreadyEquipped = currentToys.includes(id);
   return (
-    // @ts-expect-error bad img props
-    <img
-      src={toy.image}
-      className="absolute -translate-x-1/2 transform"
-      style={{ left: style.left, bottom: 0, height: height * toy.height }}
-      {...props}
-      ref={ref as LegacyRef<HTMLImageElement>}
-    />
+    <Card>
+      <CardHeader className="flex flex-row justify-between">
+        <div>
+          <CardTitle className="text-lg">{name}</CardTitle>
+          <CardDescription>{desc}</CardDescription>
+        </div>
+        <div>
+          <Image src={image} alt={name} width={48} height={48} />
+        </div>
+      </CardHeader>
+      <CardContent className="flex grow flex-row">
+        <Button
+          disabled={alreadyEquipped}
+          onClick={() =>
+            setCurrentToys(
+              currentToys.map((t, idx) => (idx === index ? id : t)),
+            )
+          }
+        >
+          {alreadyEquipped ? "Equiped " : "Equip"}
+        </Button>
+      </CardContent>
+    </Card>
   );
-});
+}
