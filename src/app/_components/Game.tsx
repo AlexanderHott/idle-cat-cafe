@@ -346,35 +346,17 @@ function CatToySlot({
 
   const cat = CATS[catIdx]!;
   const flipped = Math.random() > 0.5;
-  if (!hasToy) {
-    return (
-      <>
-        {hasCat && (
-          <img
-            src={cat.assetPath + "default.gif"}
-            className={`absolute -translate-x-1/2 transform ${
-              flipped ? "-scale-x-100" : ""
-            }`}
-            style={{
-              left: style.left,
-              bottom: height * cat.defaultStyle.bottom,
-              height: height * cat.defaultStyle.height,
-            }}
-          />
-        )}
-        <ChooseToy style={style} height={height} index={index} />
-      </>
-    );
-  }
-
-  const toy = CAT_TOYS[currentToys[index]!]!;
-  if (hasCat) {
+  // 1. cat + toy = cat in toy
+  // 2. cat + no toy = default.gif + add toy button
+  // 3. no cat + toy = toy (click to switch)
+  // 4. no cat + no toy = add toy button
+  if (hasCat && hasToy) {
+    const toy = CAT_TOYS[currentToys[index]!]!;
     const asset = toy.cats[catIdx]!;
-    // console.log("Slot", index, "hasToy", toy, catIdx, toy.cats[catIdx]);
     return (
       <img
         src={asset.src}
-        className="absolute -translate-x-1/2 transform"
+        className="pointer-events-none absolute -translate-x-1/2 transform"
         style={{
           left: style.left,
           bottom: 0,
@@ -384,16 +366,26 @@ function CatToySlot({
     );
   }
 
+  // 2. cat + no toy = default.gif + add toy button
+  // 3. no cat + toy = toy (click to switch)
+  // 4. no cat + no toy = add toy button
   return (
-    <img
-      src={toy.image}
-      className="absolute -translate-x-1/2 transform"
-      style={{
-        left: style.left,
-        bottom: 0,
-        height: height * toy.height,
-      }}
-    />
+    <>
+      {hasCat && (
+        <img
+          src={cat.assetPath + "default.gif"}
+          className={`absolute -translate-x-1/2 transform ${
+            flipped ? "-scale-x-100" : ""
+          }`}
+          style={{
+            left: style.left,
+            bottom: height * cat.defaultStyle.bottom,
+            height: height * cat.defaultStyle.height,
+          }}
+        />
+      )}
+      <ChooseToy style={style} height={height} index={index} hasToy={hasToy} />
+    </>
   );
 }
 
@@ -401,10 +393,12 @@ function ChooseToy({
   style,
   index,
   height,
+  hasToy,
 }: {
   style: { left: number; bottom: number };
   index: number;
   height: number;
+  hasToy: boolean;
 }) {
   const [currentToys, setCurrentToys] = useAtom(currentToysAtom);
   const [catToys] = useAtom(catToyAtom);
@@ -422,16 +416,18 @@ function ChooseToy({
 
       <Sheet>
         <SheetTrigger asChild>
-          {toyId !== null ? (
-            <img
-              src={CAT_TOYS[toyId!]!.image}
-              className="absolute -translate-x-1/2 transform"
-              style={{
-                left: style.left,
-                bottom: 0,
-                height: height * CAT_TOYS[toyId!]!.height,
-              }}
-            />
+          {hasToy ? (
+            <div>
+              <img
+                src={CAT_TOYS[toyId!]!.image}
+                className="absolute -translate-x-1/2 transform"
+                style={{
+                  left: style.left,
+                  bottom: 0,
+                  height: height * CAT_TOYS[toyId!]!.height,
+                }}
+              />
+            </div>
           ) : (
             <Button
               className={`absolute z-20 h-8 w-8 rounded-full`}
