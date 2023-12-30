@@ -112,8 +112,8 @@ const RARE_CATS: CatT[] = [
     assetPath: "/assets/cats/pepsi/",
     rarity: "RARE",
     defaultStyle: {
-      bottom: 0.327,
-      height: 0.4,
+      bottom: 0.398,
+      height: 0.18,
     },
   },
 ];
