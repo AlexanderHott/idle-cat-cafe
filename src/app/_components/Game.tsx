@@ -356,7 +356,7 @@ function CatToySlot({
     return (
       <img
         src={asset.src}
-        className="absolute -translate-x-1/2 transform"
+        className="pointer-events-none absolute -translate-x-1/2 transform"
         style={{
           left: style.left,
           bottom: 0,
