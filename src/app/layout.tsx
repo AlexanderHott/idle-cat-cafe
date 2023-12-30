@@ -32,7 +32,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`font-sans ${pixelifySans.variable} ${pixelifySans.className}`}
+        className={`font-sans ${pixelifySans.variable} ${pixelifySans.className} dark`}
       >
         <TRPCReactProvider cookies={cookies().toString()}>
           {children}
