@@ -307,7 +307,9 @@ export default function Game() {
         <div className="flex flex-col items-end gap-2">
           <div className="flex items-center gap-2 rounded bg-amber-50 p-2 text-amber-900 dark:bg-amber-900 dark:text-amber-50">
             <Image width={20} height={20} alt="$" src="/assets/coin.png" />
-            <span className="text-white">{Math.round(money)}</span>
+            <span className="text-amber:900 dark:text-amber-50">
+              {Math.round(money)}
+            </span>
           </div>
           <Shop />
           <SeenCats />
