@@ -1,9 +1,5 @@
 import "~/styles/globals.css";
 
-import {
-  // Inter,
-  Pixelify_Sans,
-} from "next/font/google";
 import { cookies } from "next/headers";
 import type { Metadata, Viewport } from "next";
 
@@ -14,10 +10,6 @@ import { TRPCReactProvider } from "~/trpc/react";
 //   variable: "--font-sans",
 // });
 
-const pixelifySans = Pixelify_Sans({
-  subsets: ["latin"],
-  variable: "--font-sans",
-});
 
 const APP_NAME = "Idle Cat Cafe";
 const APP_DEFAULT_TITLE = "Idle Cat Cafe";
@@ -73,7 +65,7 @@ export default function RootLayout({
     <html lang="en">
       <head />
       <body
-        className={`font-sans ${pixelifySans.variable} ${pixelifySans.className} dark`}
+        className={`font-sans dark`}
       >
         <TRPCReactProvider cookies={cookies().toString()}>
           {children}
