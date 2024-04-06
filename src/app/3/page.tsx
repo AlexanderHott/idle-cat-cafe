@@ -1,11 +1,11 @@
+import dynamic from "next/dynamic";
+
+const Game = dynamic(() => import("./Game"), { ssr: false });
+
 export default function Page() {
   return (
     <div className="overflow-x-scroll">
-      <img
-        src="/assets/background.webp"
-        alt="Background"
-        className="max-w-none h-screen"
-      />
+      <Game />
     </div>
   );
 }
