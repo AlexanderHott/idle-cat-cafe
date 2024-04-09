@@ -59,6 +59,8 @@ export function HelpInfo() {
               <Github className="h-4 w-4" />
             </Button>
           </Link>
+          <Link href="/2">2</Link>
+          <Link href="/3">3</Link>
         </div>
       </SheetContent>
     </Sheet>

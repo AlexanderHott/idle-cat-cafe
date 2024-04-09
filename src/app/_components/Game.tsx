@@ -502,7 +502,7 @@ function EquipCatToy({
             )
           }
         >
-          {alreadyEquipped ? "Equiped " : "Equip"}
+          {alreadyEquipped ? "Equipped " : "Equip"}
         </Button>
       </CardContent>
     </Card>
